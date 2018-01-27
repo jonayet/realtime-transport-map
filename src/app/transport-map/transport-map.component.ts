@@ -2,6 +2,10 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { select, zoom, event, geoMercator, geoPath } from 'd3';
 
+import { MapViewService } from './map-view.service';
+import { MapLayer } from './MapLayer';
+import { LayerOptions } from './LayerOptions';
+
 @Component({
   selector: 'app-transport-map',
   templateUrl: './transport-map.component.html',
@@ -9,75 +13,41 @@ import { select, zoom, event, geoMercator, geoPath } from 'd3';
 })
 
 export class TransportMapComponent implements OnInit {
-  @ViewChild('host') private hostElement: ElementRef;
-  @ViewChild('mapContainer') private mapContainerElement: ElementRef;
+  @ViewChild('mapHost') private hostElement: ElementRef;
 
-  constructor(private http: HttpClient) { }
-
-  private createMapView(hostElement, mapContainerElement) {
-    const host = select(hostElement);
-    const container = select(mapContainerElement);
-    const zoomHandler = zoom().on('zoom', () => {
-      const transform = event.transform;
-      container.attr('transform', `translate(${transform.x}, ${transform.y}) scale(${transform.k})`);
-    });
-    host.call(zoomHandler);
-    const mapView = {
-      svg: container,
-      width: hostElement.offsetWidth,
-      height: hostElement.offsetHeight
-    };
-    return mapView;
-  }
+  constructor(private http: HttpClient, private mapService: MapViewService) { }
 
   ngOnInit() {
-    const mapView = this.createMapView(this.hostElement.nativeElement, this.mapContainerElement.nativeElement);
+    const layerOptions = {
+      fill: '#eee'
+    };
+    const projectionOption = {
+      scale: 300000,
+      centroid: [-122.45, 37.76]
+    };
+
+    const mapView = this.mapService.createMap(this.hostElement.nativeElement, layerOptions, projectionOption);
+
     this.http.get('assets/sfmaps/streets.json').subscribe(({ features }: any) => {
       const options = {
-        centroid: [-122.43, 37.77],
+        centroid: [-122.50, 37.77],
         pathColor: '#aaa',
         transportColor: 'red'
       };
 
-      this.http.get('http://webservices.nextbus.com/service/publicJSONFeed?command=vehicleLocations&a=sf-muni&r=E&t=0')
-        .subscribe(({vehicle}: any) => {
-          const transports = vehicle.map(({lon, lat}) => {
-            return [lon, lat];
-          });
-          this.createMap(mapView, features, transports, options);
-        });
+      // this.http.get('http://webservices.nextbus.com/service/publicJSONFeed?command=vehicleLocations&a=sf-muni&r=F&t=0')
+      //   .subscribe(({vehicle}: any) => {
+      //     const transports = vehicle.map(({lon, lat}) => {
+      //       return [lon, lat];
+      //     });
+      //     this.createMap(mapView, features, transports, options);
+      //   });
+
+      const routeColor = '#aaa';
+      const routeLayer = this.mapService.createLayer(mapView, { stroke: routeColor });
+      const transportLayer = this.mapService.createLayer(mapView, { stroke: 'red', fill: 'red' });
+      this.mapService.drawRouteLayer(routeLayer, features);
+      this.mapService.drawTransportLayer(transportLayer, [[-122.495898, 37.748055]]);
     });
-  }
-
-  createMap({ svg, width, height }, geoFeatures, transports, { centroid, pathColor, transportColor }) {
-    const projection = geoMercator()
-      .scale(300000)
-      .center(centroid)
-      .translate([width / 2, height / 2]);
-
-    const path = geoPath()
-      .projection(projection);
-
-    const pathLayer = svg.append('g')
-      .style('stroke', pathColor);
-
-    pathLayer.selectAll('path')
-      .data(geoFeatures)
-      .enter()
-      .append('path')
-      .attr('d', path)
-      .attr('vector-effect', 'non-scaling-stroke');
-
-    const transportLayer = svg.append('g')
-      .style('stroke', transportColor);
-
-    transportLayer.selectAll('circle')
-      .data(transports)
-      .enter()
-      .append('circle')
-      .attr('cx', (d) => projection(d)[0])
-      .attr('cy', (d) => projection(d)[1])
-      .attr('r', '1px')
-      .attr('fill', transportColor);
   }
 }

@@ -33,13 +33,19 @@ export class TransportMapComponent implements OnInit {
   ngOnInit() {
     const mapView = this.createMapView(this.hostElement.nativeElement, this.mapContainerElement.nativeElement);
     this.http.get('assets/sfmaps/streets.json').subscribe(({ features }: any) => {
-      const transports = [[-122.490402, 37.786453], [-122.389809, 37.72728], [-122.483710, 37.750148]];
       const options = {
         centroid: [-122.43, 37.77],
         pathColor: '#aaa',
         transportColor: 'red'
       };
-      this.createMap(mapView, features, transports, options);
+
+      this.http.get('http://webservices.nextbus.com/service/publicJSONFeed?command=vehicleLocations&a=sf-muni&r=E&t=0')
+        .subscribe(({vehicle}: any) => {
+          const transports = vehicle.map(({lon, lat}) => {
+            return [lon, lat];
+          });
+          this.createMap(mapView, features, transports, options);
+        });
     });
   }
 

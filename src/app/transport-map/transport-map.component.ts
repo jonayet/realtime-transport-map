@@ -33,27 +33,45 @@ export class TransportMapComponent implements OnInit {
   ngOnInit() {
     const mapView = this.createMapView(this.hostElement.nativeElement, this.mapContainerElement.nativeElement);
     this.http.get('assets/sfmaps/streets.json').subscribe(({ features }: any) => {
-      this.createMap(mapView, features);
+      const transports = [[-122.490402, 37.786453], [-122.389809, 37.72728], [-122.483710, 37.750148]];
+      const options = {
+        centroid: [-122.43, 37.77],
+        pathColor: '#aaa',
+        transportColor: 'red'
+      };
+      this.createMap(mapView, features, transports, options);
     });
   }
 
-  createMap({ svg, width, height }, geoFeatures) {
-    const pathColor = '#aaa';
+  createMap({ svg, width, height }, geoFeatures, transports, { centroid, pathColor, transportColor }) {
     const projection = geoMercator()
       .scale(300000)
-      .center([-122.43, 37.77]) // Center the Map
+      .center(centroid)
       .translate([width / 2, height / 2]);
 
     const path = geoPath()
       .projection(projection);
 
-    const mapLayer = svg.append('g')
+    const pathLayer = svg.append('g')
       .style('stroke', pathColor);
 
-    mapLayer.selectAll('path')
+    pathLayer.selectAll('path')
       .data(geoFeatures)
-      .enter().append('path')
+      .enter()
+      .append('path')
       .attr('d', path)
       .attr('vector-effect', 'non-scaling-stroke');
+
+    const transportLayer = svg.append('g')
+      .style('stroke', transportColor);
+
+    transportLayer.selectAll('circle')
+      .data(transports)
+      .enter()
+      .append('circle')
+      .attr('cx', (d) => projection(d)[0])
+      .attr('cy', (d) => projection(d)[1])
+      .attr('r', '1px')
+      .attr('fill', transportColor);
   }
 }

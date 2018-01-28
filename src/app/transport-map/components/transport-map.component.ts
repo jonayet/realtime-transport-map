@@ -48,11 +48,11 @@ export class TransportMapComponent implements OnInit {
       this.mapViewService.drawRouteLayer(this.routeLayer, data);
     });
 
-    this.mapDataService.routes.subscribe((data) => {
+    this.mapDataService.vehicles.subscribe((data) => {
       this.mapViewService.drawTransportLayer(this.transportLayer, [[-122.495898, 37.748055]]);
     });
 
-    this.mapDataService.updateRoutes();
     this.mapDataService.updateStreets();
+    this.mapDataService.updateVehicles();
   }
 }

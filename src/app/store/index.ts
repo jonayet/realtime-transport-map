@@ -1,21 +1,26 @@
-import { Route } from '../nextbus/models';
+import { Vehicle, VehicleLocations } from '../nextbus/models';
 import { streetsReducer, StreetEffects } from './streets';
-import { routesReducer, RoutesEffects } from './routes';
+import { vehiclesReducer, VehiclesEffects } from './vehicles';
+import { vehicleLocationsReducer, VehicleLocationsEffects } from './vehicle-locations';
 
 export interface State {
   streets: any[];
-  routes: Route[];
+  vehicles: Vehicle[];
+  vehicleLocations: VehicleLocations;
 }
 
 export const reducers = {
   streets: streetsReducer,
-  routes: routesReducer
+  vehicles: vehiclesReducer,
+  vehicleLocations: vehicleLocationsReducer
 };
 
 export const effects = [
   StreetEffects,
-  RoutesEffects
+  VehiclesEffects,
+  VehicleLocationsEffects
 ];
 
-export const Streets = (state: State) => state.streets;
-export const Routes = (state: State) => state.routes;
+export const StreetsStore = (state: State) => state.streets;
+export const VehiclesStore = (state: State) => state.vehicles;
+export const VehicleLocationsStore = (state: State) => state.vehicleLocations;

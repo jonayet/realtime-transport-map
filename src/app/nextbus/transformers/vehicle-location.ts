@@ -18,11 +18,11 @@ export function transformVehicleLocation(vehicle: Vehicle, locations: VehicleLoc
   const locationKeys = Object.keys(locationMap).map(k => Number(k));
   if (!locationKeys.length) {
     const defaultLocation = locations.vehicle[0];
-    vehiclelocation[vehicle.tag] = [Number(defaultLocation.lat), Number(defaultLocation.lon)];
+    vehiclelocation[vehicle.tag] = [Number(defaultLocation.lon), Number(defaultLocation.lat)];
     return vehiclelocation;
   }
   const mostRecetTime = Math.min(...locationKeys);
   const mostRecetLocation = locationMap[mostRecetTime.toString()];
-  vehiclelocation[vehicle.tag] = [Number(mostRecetLocation.lat), Number(mostRecetLocation.lon)];
+  vehiclelocation[vehicle.tag] = [Number(mostRecetLocation.lon), Number(mostRecetLocation.lat)];
   return vehiclelocation;
 }

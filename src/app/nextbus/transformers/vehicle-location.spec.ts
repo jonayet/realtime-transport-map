@@ -11,9 +11,9 @@ describe('Vehicle Location Transformer', () => {
 
   it('location should contain {lat, lon} from locationRaw', () => {
     const vehicle = mockVehicle();
-    const locationRaw = mockVehicleLocations({vehicle: [mockVehicleLocation({lat: '123', lon: '321'})]});
+    const locationRaw = mockVehicleLocations({vehicle: [mockVehicleLocation({lon: '321', lat: '123', })]});
     const location = transformVehicleLocation(vehicle, locationRaw);
-    expect(location[vehicle.tag]).toEqual([123, 321]);
+    expect(location[vehicle.tag]).toEqual([321, 123]);
   });
 
   it('location should contain empty array if locationRaw.vehicle = []', () => {
@@ -33,29 +33,29 @@ describe('Vehicle Location Transformer', () => {
   it('location should contain most recent location from locationRaw.vehicle', () => {
     const vehicle = mockVehicle();
     const locations = [
-      mockVehicleLocation({lat: '1', lon: '2', secsSinceReport: '7'}),
-      mockVehicleLocation({lat: '3', lon: '4', secsSinceReport: '3'}),
-      mockVehicleLocation({lat: '5', lon: '6', secsSinceReport: '9'}),
-      mockVehicleLocation({lat: '7', lon: '8', secsSinceReport: '1'}),
-      mockVehicleLocation({lat: '9', lon: '10', secsSinceReport: undefined}),
+      mockVehicleLocation({lon: '4', lat: '3', secsSinceReport: '3'}),
+      mockVehicleLocation({lon: '6', lat: '5', secsSinceReport: '9'}),
+      mockVehicleLocation({lon: '2', lat: '1', secsSinceReport: '7'}),
+      mockVehicleLocation({lon: '8', lat: '7', secsSinceReport: '1'}),
+      mockVehicleLocation({lon: '10', lat: '9', secsSinceReport: undefined}),
     ];
     const locationRaw = mockVehicleLocations({vehicle: locations});
     const location = transformVehicleLocation(vehicle, locationRaw);
-    expect(location[vehicle.tag]).toEqual([7, 8]);
+    expect(location[vehicle.tag]).toEqual([8, 7]);
   });
 
   it('location should contain first location if locationRaw.vehicle{secsSinceReport} are undeffined', () => {
     const vehicle = mockVehicle();
     const locations = [
-      mockVehicleLocation({lat: '1', lon: '2', secsSinceReport: undefined}),
-      mockVehicleLocation({lat: '3', lon: '4', secsSinceReport: undefined}),
-      mockVehicleLocation({lat: '5', lon: '6', secsSinceReport: undefined}),
-      mockVehicleLocation({lat: '7', lon: '8', secsSinceReport: undefined}),
-      mockVehicleLocation({lat: '9', lon: '10', secsSinceReport: undefined}),
+      mockVehicleLocation({lon: '2', lat: '1', secsSinceReport: undefined}),
+      mockVehicleLocation({lon: '4', lat: '3', secsSinceReport: undefined}),
+      mockVehicleLocation({lon: '6', lat: '5', secsSinceReport: undefined}),
+      mockVehicleLocation({lon: '8', lat: '7', secsSinceReport: undefined}),
+      mockVehicleLocation({lon: '10', lat: '9', secsSinceReport: undefined}),
     ];
     const locationRaw = mockVehicleLocations({vehicle: locations});
     const location = transformVehicleLocation(vehicle, locationRaw);
-    expect(location[vehicle.tag]).toEqual([1, 2]);
+    expect(location[vehicle.tag]).toEqual([2, 1]);
   });
 });
 

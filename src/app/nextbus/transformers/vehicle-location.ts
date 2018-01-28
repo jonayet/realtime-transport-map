@@ -1,6 +1,6 @@
 import { Vehicle, VehicleLocationsRaw, VehicleLocationRaw, VehicleLocation } from '../models';
 
-export function transformToVehicleLocation(vehicle: Vehicle, locations: VehicleLocationsRaw): VehicleLocation {
+export function transformVehicleLocation(vehicle: Vehicle, locations: VehicleLocationsRaw): VehicleLocation {
   const vehiclelocation = {
     [vehicle.tag]: []
   };

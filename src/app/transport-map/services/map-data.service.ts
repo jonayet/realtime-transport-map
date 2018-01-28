@@ -22,7 +22,9 @@ export class MapDataService {
     this.vehicles.subscribe((vehicles) => {
       console.log('vehicles[0]', vehicles[0]);
       if (vehicles && vehicles.length) {
-        this.store.dispatch(new UpdateVehicleLocations(vehicles[0].tag));
+        this.store.dispatch(new UpdateVehicleLocations(vehicles[0]));
+        this.store.dispatch(new UpdateVehicleLocations(vehicles[1]));
+        this.store.dispatch(new UpdateVehicleLocations(vehicles[2]));
       }
     });
 

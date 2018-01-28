@@ -1,32 +1,32 @@
 import { Vehicle, VehicleLocationsRaw, VehicleLocationRaw } from '../models';
-import { transformToVehicleLocation } from './vehicle-location';
+import { transformVehicleLocation } from './vehicle-location';
 
 describe('Vehicle Location Transformer', () => {
   it('location should have a key with same as vehicle.tag', () => {
     const vehicle = mockVehicle();
     const locationRaw = mockVehicleLocations();
-    const location = transformToVehicleLocation(vehicle, locationRaw);
+    const location = transformVehicleLocation(vehicle, locationRaw);
     expect(location[vehicle.tag]).toBeDefined();
   });
 
   it('location should contain {lat, lon} from locationRaw', () => {
     const vehicle = mockVehicle();
     const locationRaw = mockVehicleLocations({vehicle: [mockVehicleLocation({lat: '123', lon: '321'})]});
-    const location = transformToVehicleLocation(vehicle, locationRaw);
+    const location = transformVehicleLocation(vehicle, locationRaw);
     expect(location[vehicle.tag]).toEqual([123, 321]);
   });
 
   it('location should contain empty array if locationRaw.vehicle = []', () => {
     const vehicle = mockVehicle();
     const locationRaw = mockVehicleLocations({vehicle: []});
-    const location = transformToVehicleLocation(vehicle, locationRaw);
+    const location = transformVehicleLocation(vehicle, locationRaw);
     expect(location[vehicle.tag]).toEqual([]);
   });
 
   it('location should contain empty array if locationRaw.vehicle = undefined', () => {
     const vehicle = mockVehicle();
     const locationRaw = mockVehicleLocations({vehicle: undefined});
-    const location = transformToVehicleLocation(vehicle, locationRaw);
+    const location = transformVehicleLocation(vehicle, locationRaw);
     expect(location[vehicle.tag]).toEqual([]);
   });
 
@@ -40,7 +40,7 @@ describe('Vehicle Location Transformer', () => {
       mockVehicleLocation({lat: '9', lon: '10', secsSinceReport: undefined}),
     ];
     const locationRaw = mockVehicleLocations({vehicle: locations});
-    const location = transformToVehicleLocation(vehicle, locationRaw);
+    const location = transformVehicleLocation(vehicle, locationRaw);
     expect(location[vehicle.tag]).toEqual([7, 8]);
   });
 
@@ -54,7 +54,7 @@ describe('Vehicle Location Transformer', () => {
       mockVehicleLocation({lat: '9', lon: '10', secsSinceReport: undefined}),
     ];
     const locationRaw = mockVehicleLocations({vehicle: locations});
-    const location = transformToVehicleLocation(vehicle, locationRaw);
+    const location = transformVehicleLocation(vehicle, locationRaw);
     expect(location[vehicle.tag]).toEqual([1, 2]);
   });
 });

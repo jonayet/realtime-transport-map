@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
 import { Vehicle, VehicleLocation } from '../models';
+import { transformVehicleLocation } from '../transformers';
 
 import 'rxjs/add/operator/map';
 
@@ -18,14 +19,8 @@ export class NextbusService {
     return this.http.get<any>(vehiclesUrl).map(result => result.route.map((vehicle: Vehicle) => vehicle));
   }
 
-  getVehicleLocations(routeTag: string): Observable<any> {
-    routeTag = 'F';
-    const routesUrl = `${this.baseUrl}?command=vehicleLocations&a=${this.agency}&r=${routeTag}&t=0`;
-    return this.http.get<any>(routesUrl).map(result => {
-      const locations = result.vehicle.map((vehicleLocation: VehicleLocation) => [vehicleLocation.lat, vehicleLocation.lon]);
-       return {
-         [routeTag]: locations
-       };
-    });
+  getVehicleLocation(vehicle: Vehicle): Observable<VehicleLocation> {
+    const routesUrl = `${this.baseUrl}?command=vehicleLocations&a=${this.agency}&r=${vehicle.tag}&t=0`;
+    return this.http.get<any>(routesUrl).map(result => transformVehicleLocation(vehicle, result));
   }
 }

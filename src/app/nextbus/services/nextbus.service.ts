@@ -15,8 +15,6 @@ export class NextbusService {
 
   getRoutes(): Observable<Route[]> {
     const routesUrl = `${this.baseUrl}?command=routeList&a=${this.agency}`;
-    return this.http.get<any>(routesUrl).map(result => {
-      return result.route.map((route: Route) => route);
-    });
+    return this.http.get<any>(routesUrl).map(result => result.route.map((route: Route) => route));
   }
 }

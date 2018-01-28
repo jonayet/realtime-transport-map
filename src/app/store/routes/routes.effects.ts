@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
-import { HttpClient } from '@angular/common/http';
 
 import { NextbusService } from '../../nextbus/services';
 import { RoutesUpdated, ActionType } from './routes.actions';

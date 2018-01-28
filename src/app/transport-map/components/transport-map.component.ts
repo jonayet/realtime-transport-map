@@ -2,9 +2,8 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { select, zoom, event, geoMercator, geoPath } from 'd3';
 
-import { MapViewService } from './map-view.service';
-import { MapLayer } from './MapLayer';
-import { LayerOptions } from './LayerOptions';
+import { MapLayer, LayerOptions } from '../models';
+import { MapViewService, MapDataService } from '../services';
 
 @Component({
   selector: 'app-transport-map',
@@ -15,7 +14,7 @@ import { LayerOptions } from './LayerOptions';
 export class TransportMapComponent implements OnInit {
   @ViewChild('mapHost') private hostElement: ElementRef;
 
-  constructor(private http: HttpClient, private mapService: MapViewService) { }
+  constructor(private http: HttpClient, private mapViewService: MapViewService, private mapDataService: MapDataService) { }
 
   ngOnInit() {
     const layerOptions = {
@@ -26,7 +25,7 @@ export class TransportMapComponent implements OnInit {
       centroid: [-122.45, 37.76]
     };
 
-    const mapView = this.mapService.createMap(this.hostElement.nativeElement, layerOptions, projectionOption);
+    const mapView = this.mapViewService.createMap(this.hostElement.nativeElement, layerOptions, projectionOption);
 
     this.http.get('assets/sfmaps/streets.json').subscribe(({ features }: any) => {
       const options = {
@@ -44,10 +43,15 @@ export class TransportMapComponent implements OnInit {
       //   });
 
       const routeColor = '#aaa';
-      const routeLayer = this.mapService.createLayer(mapView, { stroke: routeColor });
-      const transportLayer = this.mapService.createLayer(mapView, { stroke: 'red', fill: 'red' });
-      this.mapService.drawRouteLayer(routeLayer, features);
-      this.mapService.drawTransportLayer(transportLayer, [[-122.495898, 37.748055]]);
+      const routeLayer = this.mapViewService.createLayer(mapView, { stroke: routeColor });
+      const transportLayer = this.mapViewService.createLayer(mapView, { stroke: 'red', fill: 'red' });
+      this.mapViewService.drawRouteLayer(routeLayer, features);
+      this.mapViewService.drawTransportLayer(transportLayer, [[-122.495898, 37.748055]]);
+
+      this.mapDataService.routes.subscribe((data) => {
+        console.log('routes', data);
+      });
+      this.mapDataService.updateRoutes();
     });
   }
 }

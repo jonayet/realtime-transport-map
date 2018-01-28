@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
 import { select, zoom, event, geoMercator, geoPath, GeoProjection } from 'd3';
 
-import { MapLayer } from './MapLayer';
-import { LayerOptions } from './LayerOptions';
-import { ProjectionOptions } from './ProjectionOptions';
+import { MapLayer, LayerOptions, ProjectionOptions } from '../models';
 
 @Injectable()
 export class MapViewService {

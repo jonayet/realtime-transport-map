@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { select, zoom, event, geoMercator, geoPath, GeoProjection } from 'd3';
+import { select, zoom, event, geoMercator, geoPath, GeoProjection, ExtendedFeature, GeoGeometryObjects } from 'd3';
 
 import { MapLayer, LayerOptions, ProjectionOptions } from '../models';
 
@@ -57,7 +57,7 @@ export class MapViewService {
     return layer;
   }
 
-  drawRouteLayer(layer: MapLayer, geoFeatures: any[]) {
+  drawRouteLayer(layer: MapLayer, geoFeatures: ExtendedFeature<GeoGeometryObjects, any>[]) {
     const path = geoPath()
       .projection(this.projection);
 

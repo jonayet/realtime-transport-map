@@ -1,10 +1,12 @@
+import { ExtendedFeature, GeoGeometryObjects } from 'd3';
+
 import { Route, Vehicles } from '../nextbus/models';
 import { streetsReducer, StreetEffects } from './streets';
 import { routesReducer, RoutesEffects } from './routes';
 import { vehiclesReducer, VehiclesEffects } from './vehicles';
 
 export interface State {
-  streets: any[];
+  streets: ExtendedFeature<GeoGeometryObjects, any>[];
   routes: Route[];
   vehicles: Vehicles;
 }

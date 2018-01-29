@@ -14,10 +14,11 @@ import { ControlledStream } from './ControlledStream';
 
 import 'rxjs/add/observable/from';
 import 'rxjs/add/observable/timer';
+import { ExtendedFeature, GeoGeometryObjects } from 'd3';
 
 @Injectable()
 export class MapDataService {
-  streets: Observable<any[]>;
+  streets: Observable<ExtendedFeature<GeoGeometryObjects, any>[]>;
   routes: Observable<Route[]>;
   vehicles: Observable<Vehicles>;
 

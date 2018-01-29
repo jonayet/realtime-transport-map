@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Actions, Effect } from '@ngrx/effects';
+import { Observable } from 'rxjs/Observable';
+import { ExtendedFeature, GeoGeometryObjects } from 'd3';
 
 import { StreetsUpdated, ActionType } from './streets.actions';
 
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/map';
+
 
 @Injectable()
 export class StreetEffects {
@@ -21,7 +24,7 @@ export class StreetEffects {
     private actions: Actions,
   ) { }
 
-  private getStreets() {
+  private getStreets(): Observable<ExtendedFeature<GeoGeometryObjects, any>[]> {
     const streetsUrl = 'assets/sfmaps/streets.json';
     return this.http.get<any>(streetsUrl).map((result) => result.features);
   }

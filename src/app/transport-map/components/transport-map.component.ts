@@ -44,15 +44,42 @@ export class TransportMapComponent implements OnInit {
     this.routeLayer = this.mapViewService.createLayer(mapRootLayer, this.routeLayerOptions);
     this.transportLayer = this.mapViewService.createLayer(mapRootLayer, this.transportLayerOptions);
 
-    this.mapDataService.streets.subscribe((data) => {
-      this.mapViewService.drawRouteLayer(this.routeLayer, data);
+    this.mapDataService.streets.subscribe((streets) => {
+      this.mapViewService.drawRouteLayer(this.routeLayer, streets);
     });
 
-    this.mapDataService.vehicles.subscribe((data) => {
-      this.mapViewService.drawTransportLayer(this.transportLayer, [[-122.495898, 37.748055]]);
+    this.mapDataService.vehicleLocations.subscribe((vehicleLocations) => {
+      let n = 0;
+      const vehiclePositions = Object.keys(vehicleLocations).reduce((positions, vehicleTag) => {
+        const position = vehicleLocations[vehicleTag];
+        if (position.length && n < 5) {
+          positions.push(position);
+          n++;
+        }
+        return positions;
+      }, []);
+      this.mapViewService.drawTransportLayer(this.transportLayer, []);
+      this.mapViewService.drawTransportLayer(this.transportLayer, vehiclePositions);
     });
 
     this.mapDataService.updateStreets();
     this.mapDataService.updateVehicles();
   }
 }
+
+// const m = [
+//   [-122.40995, 37.793804],
+//   [-122.473228, 37.782501],
+//   [-122.446976, 37.787716],
+//   [-122.406258, 37.785366],
+//   [-122.415703, 37.778015],
+//   [-122.478546, 37.765324],
+//   [-122.407516, 37.783512],
+//   [-122.404625, 37.7868],
+//   [-122.395668, 37.784733],
+//   [-122.41758, 37.7523539],
+//   [-122.460205, 37.706306],
+//   [-122.499474, 37.785069]
+// ];
+// this.mapViewService.drawTransportLayer(this.transportLayer, []);
+// this.mapViewService.drawTransportLayer(this.transportLayer, m);

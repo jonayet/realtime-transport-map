@@ -68,8 +68,9 @@ export class MapViewService {
       .append('path')
       .attr('d', path)
       .attr('vector-effect', 'non-scaling-stroke')
-      .merge(nodes)
-      .exit()
+      .merge(nodes);
+
+    nodes.exit()
       .remove();
   }
 
@@ -82,8 +83,9 @@ export class MapViewService {
       .attr('cx', (d) => this.projection(d)[0])
       .attr('cy', (d) => this.projection(d)[1])
       .attr('r', '1px')
-      .merge(nodes)
-      .exit()
+      .merge(nodes);
+
+    nodes.exit()
       .remove();
   }
 

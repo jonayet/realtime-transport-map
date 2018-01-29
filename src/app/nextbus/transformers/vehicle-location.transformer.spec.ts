@@ -1,5 +1,5 @@
 import { Vehicle, VehicleLocationsRaw, VehicleLocationRaw } from '../models';
-import { transformVehicleLocation } from './vehicle-location';
+import { transformVehicleLocation } from './vehicle-location.transformer';
 
 describe('Vehicle Location Transformer', () => {
   it('location should have a key with same as vehicle.tag', () => {

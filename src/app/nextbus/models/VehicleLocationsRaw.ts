@@ -1,17 +1,8 @@
-export interface VehicleLocationRaw {
-      heading: string;
-      id: string;
-      lat: string;
-      lon: string;
-      routeTag: string;
-      predictable: string;
-      secsSinceReport: string;
-      speedKmHr: string;
-}
+import { VehicleRaw } from './VehicleRaw';
 
 export interface VehicleLocationsRaw {
-  vehicle: VehicleLocationRaw [];
+  vehicle: VehicleRaw [];
   lastTime: {
-    time: number
+    time: string
   };
 }

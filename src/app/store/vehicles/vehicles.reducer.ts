@@ -1,10 +1,10 @@
-import { Vehicle } from '../../nextbus/models';
+import { Vehicles } from '../../nextbus/models';
 import { Actions, ActionType } from './vehicles.actions';
 
-export function vehiclesReducer(state: Vehicle[] = [], action: Actions): Vehicle[] {
+export function vehiclesReducer(state: Vehicles = {}, action: Actions): Vehicles {
   switch (action.type) {
     case ActionType.UPDATED:
-      return action.payload;
+      return Object.assign({}, state, action.payload);
     default:
       return state;
   }

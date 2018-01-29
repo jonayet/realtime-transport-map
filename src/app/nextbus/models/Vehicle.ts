@@ -1,4 +1,7 @@
 export interface Vehicle {
-  title: string;
-  tag: string;
+  id: string;
+  routeTag: string;
+  position: number[];
+  heading: number;
+  speedKmHr: number;
 }

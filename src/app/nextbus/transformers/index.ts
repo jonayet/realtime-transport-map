@@ -1,1 +1,1 @@
-export * from './vehicle-location.transformer';
+export * from './vehicle.transformer';

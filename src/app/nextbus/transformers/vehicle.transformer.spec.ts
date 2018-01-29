@@ -1,7 +1,7 @@
-import { Vehicle, VehicleLocationsRaw, VehicleLocationRaw } from '../models';
-import { transformVehicleLocation } from './vehicle-location.transformer';
+import { Route, VehicleLocationsRaw, VehicleLocationRaw } from '../models';
+import { transformVehicleLocation } from './vehicle.transformer';
 
-describe('Vehicle Location Transformer', () => {
+describe('Route Location Transformer', () => {
   it('location should have a key with same as vehicle.tag', () => {
     const vehicle = mockVehicle();
     const locationRaw = mockVehicleLocations();
@@ -63,8 +63,8 @@ function chooseFromList(data) {
   return data[Math.round(Math.random() * (data.length - 1))];
 }
 
-function mockVehicle({...props} = {}): Vehicle {
-  const vehicle: Vehicle = {
+function mockVehicle({...props} = {}): Route {
+  const vehicle: Route = {
     tag: chooseFromList(['E', 'F', 'G', 'H']),
     title: chooseFromList(['E Bus', 'F Train', 'G Tarm', 'H Metro']),
     ...props
@@ -88,13 +88,13 @@ function mockVehicleLocation({...props} = {}): VehicleLocationRaw {
 }
 
 function mockVehicleLocations({...props} = {}): VehicleLocationsRaw {
-  const noOfVehicles = Math.round(Math.random() * 5);
-  const vehicles = Array.from(Array(noOfVehicles).keys()).map(() => {
+  const noOfRoutes = Math.round(Math.random() * 5);
+  const routes = Array.from(Array(noOfRoutes).keys()).map(() => {
     return mockVehicleLocation();
   });
 
   const location: VehicleLocationsRaw = {
-    vehicle: vehicles,
+    vehicle: routes,
     lastTime: {
       time: 0
     },

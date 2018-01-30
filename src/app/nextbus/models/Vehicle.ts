@@ -1,7 +1,11 @@
 export interface Vehicle {
   id: string;
   routeTag: string;
-  position: number[];
   heading: number;
   speedKmHr: number;
+  dirTag: string;
+  lat: number;
+  lon: number;
+  secsSinceReport: number;
+  predictable: boolean;
 }

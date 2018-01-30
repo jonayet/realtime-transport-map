@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Actions, Effect } from '@ngrx/effects';
 import { Observable } from 'rxjs/Observable';
-import { ExtendedFeature, GeoGeometryObjects } from 'd3';
 
+import { GeoData } from '../../transport-map/models';
 import { StreetsUpdated, ActionType } from './streets.actions';
 
 import 'rxjs/add/operator/switchMap';
@@ -24,8 +24,8 @@ export class StreetEffects {
     private actions: Actions,
   ) { }
 
-  private getStreets(): Observable<ExtendedFeature<GeoGeometryObjects, any>[]> {
+  private getStreets(): Observable<GeoData> {
     const streetsUrl = 'assets/sfmaps/streets.json';
-    return this.http.get<any>(streetsUrl).map((result) => result.features);
+    return this.http.get<GeoData>(streetsUrl);
   }
 }

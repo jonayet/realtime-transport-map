@@ -8,10 +8,14 @@ export function transformVehicles(route: Route, vehicleLocations: VehicleLocatio
     .reduce((vehiclesMap, vehicle) => {
       vehiclesMap[route.tag + vehicle.id] = {
         id: vehicle.id,
-        heading: Number(vehicle.heading),
-        position: [Number(vehicle.lon), Number(vehicle.lat)],
         routeTag: vehicle.routeTag,
-        speedKmHr: Number(vehicle.speedKmHr)
+        dirTag: vehicle.dirTag,
+        lon: Number(vehicle.lon),
+        lat: Number(vehicle.lat),
+        heading: Number(vehicle.heading),
+        speedKmHr: Number(vehicle.speedKmHr),
+        predictable: Boolean(vehicle.predictable),
+        secsSinceReport: Number(vehicle.secsSinceReport)
       };
       return vehiclesMap;
     }, {} as Vehicles);

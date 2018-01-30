@@ -5,27 +5,33 @@ import { Subscriber } from 'rxjs/Subscriber';
 import { Subject } from 'rxjs/Subject';
 import { Store, select } from '@ngrx/store';
 
-import { Route, Vehicles } from '../../nextbus/models';
+import { GeoData, GeoFeature } from '../models';
+import { Route, Vehicles, Vehicle } from '../../nextbus/models';
 import { State, StreetsStore, RoutesStore, VehiclesStore } from '../../store';
 import { UpdateStreets } from '../../store/streets';
 import { UpdateRoutes } from '../../store/routes';
 import { UpdateVehicles } from '../../store/vehicles';
-import { ControlledStream } from './ControlledStream';
+import { ControlledStream } from '../utilities';
 
 import 'rxjs/add/observable/from';
 import 'rxjs/add/observable/timer';
-import { ExtendedFeature, GeoGeometryObjects } from 'd3';
 
 @Injectable()
 export class MapDataService {
-  streets: Observable<ExtendedFeature<GeoGeometryObjects, any>[]>;
+  streets: Observable<GeoData>;
+  streetsGeoData: Observable<GeoData>;
   routes: Observable<Route[]>;
   vehicles: Observable<Vehicles>;
+  vehicleGeoData: Observable<GeoData>;
 
   constructor(private store: Store<State>) {
     this.streets = store.pipe(select(StreetsStore));
+    this.streetsGeoData = this.streets.map((data) =>  data);
     this.routes = store.pipe(select(RoutesStore));
     this.vehicles = store.pipe(select(VehiclesStore));
+    this.vehicleGeoData = this.vehicles.map((vehicles) => {
+      return this.transformToGeoData(vehicles);
+    });
 
     this.routes.subscribe((routes) => {
       if (!routes || !routes.length) {
@@ -37,6 +43,25 @@ export class MapDataService {
       //   subscription.unsubscribe();
       // }, 5000);
     });
+  }
+
+  private transformToGeoData<T>(source: {}): GeoData<T> {
+    const features = Object.keys(source).map((key) => {
+      const item = source[key];
+      const {lon, lat, ...properties} = item;
+      return {
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: [lon, lat]
+        },
+        properties: properties
+      };
+    });
+    return {
+      type: 'FeatureCollection',
+      features
+    };
   }
 
   private updateMap(routes: Route[], reqPerBatch = 20, interval = 10000): Observable<void> {

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { select, zoom, event, geoMercator, geoPath, GeoProjection, ExtendedFeature, GeoGeometryObjects } from 'd3';
+import { scaleLinear, select, zoom, event, geoMercator, geoPath, GeoProjection } from 'd3';
 
-import { MapLayer, LayerOptions, ProjectionOptions } from '../models';
+import { MapLayer, LayerOptions, ProjectionOptions, GeoData, GeoFeature } from '../models';
 
 @Injectable()
 export class MapViewService {
@@ -57,12 +57,15 @@ export class MapViewService {
     return layer;
   }
 
-  drawRouteLayer(layer: MapLayer, geoFeatures: ExtendedFeature<GeoGeometryObjects, any>[]) {
+  drawRouteLayer(layer: MapLayer, geoData: any) {
+    if (!geoData || !geoData.features) {
+      return;
+    }
     const path = geoPath()
       .projection(this.projection);
 
     const nodes = layer.node.selectAll('path')
-      .data(geoFeatures);
+      .data(geoData.features);
 
     nodes.enter()
       .append('path')
@@ -74,16 +77,36 @@ export class MapViewService {
       .remove();
   }
 
-  drawTransportLayer(layer: MapLayer, positions: any[]) {
+  drawTransportLayer(layer: MapLayer, geoData: any) {
+    if (!geoData || !geoData.features) {
+      return;
+    }
+
+    const color = scaleLinear()
+    .domain([1, 20])
+    .clamp(true);
+    // .range(['#fff', '#409A99']);
+
+    const path = geoPath()
+      .projection(this.projection);
+
     const nodes = layer.node.selectAll('circle')
-      .data(positions);
+      .data(geoData.features);
 
     nodes.enter()
-      .append('circle')
-      .attr('cx', (d) => this.projection(d)[0])
-      .attr('cy', (d) => this.projection(d)[1])
-      .attr('r', '1px')
+      .append('path')
+      .attr('d', path)
+      .style('fill', (d: GeoFeature) => {
+        return d ? color(d.properties.heading) : '';
+      })
       .merge(nodes);
+
+    // nodes.enter()
+    //   .append('circle')
+    //   .attr('cx', (d) => this.projection(d)[0])
+    //   .attr('cy', (d) => this.projection(d)[1])
+    //   .attr('r', '1px')
+    //   .merge(nodes);
 
     nodes.exit()
       .remove();

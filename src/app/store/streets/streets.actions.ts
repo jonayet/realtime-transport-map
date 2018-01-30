@@ -1,5 +1,6 @@
 import { Action } from '@ngrx/store';
-import { ExtendedFeature, GeoGeometryObjects } from 'd3';
+
+import { GeoData } from '../../transport-map/models';
 
 export const enum ActionType {
   UPDATE = '[STREETS] UPDATE',
@@ -13,7 +14,7 @@ export class UpdateStreets implements Action {
 export class StreetsUpdated implements Action {
   readonly type = ActionType.UPDATED;
 
-  constructor(public payload: ExtendedFeature<GeoGeometryObjects, any>[]) {}
+  constructor(public payload: GeoData) {}
 }
 
 export type Actions = UpdateStreets | StreetsUpdated;

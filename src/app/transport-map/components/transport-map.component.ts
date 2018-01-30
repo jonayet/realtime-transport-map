@@ -44,19 +44,19 @@ export class TransportMapComponent implements OnInit {
     this.routeLayer = this.mapViewService.createLayer(mapRootLayer, this.routeLayerOptions);
     this.transportLayer = this.mapViewService.createLayer(mapRootLayer, this.transportLayerOptions);
 
-    this.mapDataService.streets.subscribe((streets) => {
-      this.mapViewService.drawRouteLayer(this.routeLayer, streets);
+    this.mapDataService.streetsGeoData.subscribe((streetsGeoData) => {
+      this.mapViewService.drawRouteLayer(this.routeLayer, streetsGeoData);
     });
 
-    this.mapDataService.vehicles.subscribe((vehicles) => {
-      const vehiclePositions = Object.keys(vehicles).reduce((positions, uniqueVehicleId) => {
-        const vehicle = vehicles[uniqueVehicleId];
-        positions.push(vehicle.position);
-        return positions;
-      }, []);
+    this.mapDataService.vehicleGeoData.subscribe((vehicleGeoData) => {
+      // const vehiclePositions = Object.keys(vehicles).reduce((positions, uniqueVehicleId) => {
+      //   const vehicle = vehicles[uniqueVehicleId];
+      //   positions.push(vehicle.position);
+      //   return positions;
+      // }, []);
 
-      this.mapViewService.drawTransportLayer(this.transportLayer, []);
-      this.mapViewService.drawTransportLayer(this.transportLayer, vehiclePositions);
+      // this.mapViewService.drawTransportLayer(this.transportLayer, []);
+      this.mapViewService.drawTransportLayer(this.transportLayer, vehicleGeoData);
     });
 
     this.mapDataService.updateStreets();

@@ -6,12 +6,12 @@ import { Subject } from 'rxjs/Subject';
 import { Store, select } from '@ngrx/store';
 
 import { GeoData, GeoFeature } from '../models';
-import { Route, Vehicles, Vehicle } from '../../nextbus/models';
+import { Route, Routes, Vehicles } from '../../nextbus/models';
 import { State, StreetsStore, RoutesStore, VehiclesStore } from '../../store';
 import { UpdateStreets } from '../../store/streets';
 import { UpdateRoutes } from '../../store/routes';
 import { UpdateVehicles } from '../../store/vehicles';
-import { ControlledStream } from '../utilities';
+import { convertToArray, convertToGeoData, ControlledStream } from '../utilities';
 
 import 'rxjs/add/observable/from';
 import 'rxjs/add/observable/timer';
@@ -25,43 +25,25 @@ export class MapDataService {
   vehicleGeoData: Observable<GeoData>;
 
   constructor(private store: Store<State>) {
-    this.streets = store.pipe(select(StreetsStore));
-    this.streetsGeoData = this.streets.map((data) =>  data);
-    this.routes = store.pipe(select(RoutesStore));
+    this.streetsGeoData = store.pipe(select(StreetsStore));
+    this.routes = store.pipe(select(RoutesStore)).map((routes) => convertToArray(routes, (r) => r));
     this.vehicles = store.pipe(select(VehiclesStore));
     this.vehicleGeoData = this.vehicles.map((vehicles) => {
-      return this.transformToGeoData(vehicles);
+      return convertToGeoData(vehicles);
     });
 
     this.routes.subscribe((routes) => {
       if (!routes || !routes.length) {
         return;
       }
+
       const subscription = this.updateMap(routes).subscribe();
 
       // setInterval(() => {
-      //   subscription.unsubscribe();
+      //   this.store.dispatch(new UpdateVehicles(routes[0]));
+      //   // subscription.unsubscribe();
       // }, 5000);
     });
-  }
-
-  private transformToGeoData<T>(source: {}): GeoData<T> {
-    const features = Object.keys(source).map((key) => {
-      const item = source[key];
-      const {lon, lat, ...properties} = item;
-      return {
-        type: 'Feature',
-        geometry: {
-          type: 'Point',
-          coordinates: [lon, lat]
-        },
-        properties: properties
-      };
-    });
-    return {
-      type: 'FeatureCollection',
-      features
-    };
   }
 
   private updateMap(routes: Route[], reqPerBatch = 20, interval = 10000): Observable<void> {
@@ -109,8 +91,8 @@ export class MapDataService {
     });
 
     // console.log('-------Start-------', new Date().toISOString());
-    streamSubscription = stream.source.subscribe((vehicle) => {
-      this.store.dispatch(new UpdateVehicles(vehicle));
+    streamSubscription = stream.source.subscribe((route) => {
+      this.store.dispatch(new UpdateVehicles(route));
     }, (err) => {
       observer.error();
     }, () => {

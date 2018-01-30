@@ -1,12 +1,12 @@
 import { GeoData } from '../transport-map/models';
-import { Route, Vehicles } from '../nextbus/models';
+import { Routes, Vehicles } from '../nextbus/models';
 import { streetsReducer, StreetEffects } from './streets';
 import { routesReducer, RoutesEffects } from './routes';
 import { vehiclesReducer, VehiclesEffects } from './vehicles';
 
 export interface State {
   streets: GeoData;
-  routes: Route[];
+  routes: Routes;
   vehicles: Vehicles;
 }
 

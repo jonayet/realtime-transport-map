@@ -1,14 +1,13 @@
 import { Injectable } from '@angular/core';
-import { scaleLinear, select, zoom, event, geoMercator, geoPath, GeoProjection } from 'd3';
+import { scaleLinear, select, zoom, event, geoMercator, geoPath, GeoProjection, ScaleLinear } from 'd3';
 
 import { MapLayer, LayerOptions, ProjectionOptions, GeoData, GeoFeature } from '../models';
 
 @Injectable()
 export class MapViewService {
-
   private projection: GeoProjection;
 
-  constructor() { }
+  constructor() {}
 
   createMap(hostElement: any, layerOptions: LayerOptions, projectionOptions: ProjectionOptions): MapLayer {
     const host = select(hostElement);
@@ -82,22 +81,17 @@ export class MapViewService {
       return;
     }
 
-    const color = scaleLinear()
-    .domain([1, 20])
-    .clamp(true);
-    // .range(['#fff', '#409A99']);
-
     const path = geoPath()
       .projection(this.projection);
 
-    const nodes = layer.node.selectAll('circle')
+    const nodes = layer.node.selectAll('path')
       .data(geoData.features);
 
     nodes.enter()
       .append('path')
       .attr('d', path)
       .style('fill', (d: GeoFeature) => {
-        return d ? color(d.properties.heading) : '';
+        return d ? d.properties.color : '';
       })
       .merge(nodes);
 

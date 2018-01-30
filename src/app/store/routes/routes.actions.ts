@@ -1,6 +1,6 @@
 import { Action } from '@ngrx/store';
 
-import { Route } from '../../nextbus/models';
+import { Routes } from '../../nextbus/models';
 
 export const enum ActionType {
   UPDATE = '[ROUTES] UPDATE',
@@ -14,7 +14,7 @@ export class UpdateRoutes implements Action {
 export class RoutesUpdated implements Action {
   readonly type = ActionType.UPDATED;
 
-  constructor(public payload: Route[]) {}
+  constructor(public payload: Routes) {}
 }
 
 export type Actions = UpdateRoutes | RoutesUpdated;

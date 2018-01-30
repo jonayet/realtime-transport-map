@@ -1,6 +1,6 @@
-import { Route, VehicleRaw, VehicleLocationsRaw, Vehicle, Vehicles } from '../models';
+import { Route, VehicleRaw, VehicleLocations, Vehicle, Vehicles } from '../models';
 
-export function transformVehicles(route: Route, vehicleLocations: VehicleLocationsRaw): Vehicles {
+export function transformVehicles(route: Route, vehicleLocations: VehicleLocations): Vehicles {
   if (!vehicleLocations.vehicle || !vehicleLocations.vehicle.length) {
     return {};
   }
@@ -9,13 +9,12 @@ export function transformVehicles(route: Route, vehicleLocations: VehicleLocatio
       vehiclesMap[route.tag + vehicle.id] = {
         id: vehicle.id,
         routeTag: vehicle.routeTag,
-        dirTag: vehicle.dirTag,
         lon: Number(vehicle.lon),
         lat: Number(vehicle.lat),
         heading: Number(vehicle.heading),
         speedKmHr: Number(vehicle.speedKmHr),
-        predictable: Boolean(vehicle.predictable),
-        secsSinceReport: Number(vehicle.secsSinceReport)
+        secsSinceReport: Number(vehicle.secsSinceReport),
+        color: route.color
       };
       return vehiclesMap;
     }, {} as Vehicles);

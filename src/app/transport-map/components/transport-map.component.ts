@@ -27,8 +27,7 @@ export class TransportMapComponent implements OnInit {
   };
 
   private transportLayerOptions = {
-    fill: 'red',
-    stroke: 'red'
+    fill: 'red'
   };
 
   private routeLayer: MapLayer;
@@ -55,7 +54,7 @@ export class TransportMapComponent implements OnInit {
       //   return positions;
       // }, []);
 
-      // this.mapViewService.drawTransportLayer(this.transportLayer, []);
+      this.mapViewService.drawTransportLayer(this.transportLayer, []);
       this.mapViewService.drawTransportLayer(this.transportLayer, vehicleGeoData);
     });
 

@@ -1,10 +1,10 @@
-import { Route } from '../../nextbus/models';
+import { Routes } from '../../nextbus/models';
 import { Actions, ActionType } from './routes.actions';
 
-export function routesReducer(state: Route[] = [], action: Actions): Route[] {
+export function routesReducer(state: Routes = {}, action: Actions): Routes {
   switch (action.type) {
     case ActionType.UPDATED:
-      return action.payload;
+    return Object.assign({}, state, action.payload);
     default:
       return state;
   }

@@ -6,8 +6,10 @@ import { MapLayer, LayerOptions, ProjectionOptions, GeoData, GeoFeature } from '
 @Injectable()
 export class MapViewService {
   private projection: GeoProjection;
+  private path: any;
+  private vehicleTriangle = '1,0 0,3 2,3';
 
-  constructor() {}
+  constructor() { }
 
   createMap(hostElement: any, layerOptions: LayerOptions, projectionOptions: ProjectionOptions): MapLayer {
     const host = select(hostElement);
@@ -37,6 +39,7 @@ export class MapViewService {
 
     const { centroid, scale } = projectionOptions;
     this.projection = this.createProjection(scale, centroid, hostElement.offsetWidth, hostElement.offsetHeight);
+    this.path = geoPath().projection(this.projection);
     return layer;
   }
 
@@ -60,17 +63,15 @@ export class MapViewService {
     if (!geoData || !geoData.features) {
       return;
     }
-    const path = geoPath()
-      .projection(this.projection);
 
     const nodes = layer.node.selectAll('path')
       .data(geoData.features);
 
     nodes.enter()
       .append('path')
-      .attr('d', path)
-      .attr('vector-effect', 'non-scaling-stroke')
-      .merge(nodes);
+      .merge(nodes)
+      .attr('d', this.path)
+      .attr('vector-effect', 'non-scaling-stroke');
 
     nodes.exit()
       .remove();
@@ -81,26 +82,18 @@ export class MapViewService {
       return;
     }
 
-    const path = geoPath()
-      .projection(this.projection);
-
-    const nodes = layer.node.selectAll('path')
+    const nodes = layer.node.selectAll('polygon')
       .data(geoData.features);
 
     nodes.enter()
-      .append('path')
-      .attr('d', path)
-      .style('fill', (d: GeoFeature) => {
-        return d ? d.properties.color : '';
-      })
-      .merge(nodes);
-
-    // nodes.enter()
-    //   .append('circle')
-    //   .attr('cx', (d) => this.projection(d)[0])
-    //   .attr('cy', (d) => this.projection(d)[1])
-    //   .attr('r', '1px')
-    //   .merge(nodes);
+      .append('polygon')
+      .merge(nodes)
+      .attr('points', this.vehicleTriangle)
+      .style('fill', (d: any) => d.properties.color)
+      .attr('transform', (d: any) => {
+        const transform = `translate(${this.projection(d.geometry.coordinates)})`;
+        return d.properties.heading >= 0 ? transform + `rotate(${d.properties.heading})` : transform;
+      });
 
     nodes.exit()
       .remove();

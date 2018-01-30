@@ -48,13 +48,6 @@ export class TransportMapComponent implements OnInit {
     });
 
     this.mapDataService.vehicleGeoData.subscribe((vehicleGeoData) => {
-      // const vehiclePositions = Object.keys(vehicles).reduce((positions, uniqueVehicleId) => {
-      //   const vehicle = vehicles[uniqueVehicleId];
-      //   positions.push(vehicle.position);
-      //   return positions;
-      // }, []);
-
-      this.mapViewService.drawTransportLayer(this.transportLayer, []);
       this.mapViewService.drawTransportLayer(this.transportLayer, vehicleGeoData);
     });
 
@@ -62,20 +55,3 @@ export class TransportMapComponent implements OnInit {
     this.mapDataService.updateRoutes();
   }
 }
-
-// const m = [
-//   [-122.40995, 37.793804],
-//   [-122.473228, 37.782501],
-//   [-122.446976, 37.787716],
-//   [-122.406258, 37.785366],
-//   [-122.415703, 37.778015],
-//   [-122.478546, 37.765324],
-//   [-122.407516, 37.783512],
-//   [-122.404625, 37.7868],
-//   [-122.395668, 37.784733],
-//   [-122.41758, 37.7523539],
-//   [-122.460205, 37.706306],
-//   [-122.499474, 37.785069]
-// ];
-// this.mapViewService.drawTransportLayer(this.transportLayer, []);
-// this.mapViewService.drawTransportLayer(this.transportLayer, m);

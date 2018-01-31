@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { select, zoom, event, geoMercator, geoPath } from 'd3';
 
@@ -12,8 +12,12 @@ import { MapViewService, MapDataService } from '../services';
   styleUrls: ['./transport-map.component.scss']
 })
 
-export class TransportMapComponent implements OnInit {
-  @ViewChild('mapHost') private hostElement: ElementRef;
+export class TransportMapComponent implements OnInit, OnDestroy {
+  @ViewChild('mapHost') hostElement: ElementRef;
+
+  routesControl = new FormControl();
+  routes: Route[];
+  isInitialized = false;
 
   private projectionOption = {
     scale: 1000000,
@@ -35,9 +39,6 @@ export class TransportMapComponent implements OnInit {
   private routeLayer: MapLayer;
   private transportLayer: MapLayer;
 
-  routesControl = new FormControl();
-  routes: Route[];
-
   constructor(
     private mapViewService: MapViewService,
     private mapDataService: MapDataService
@@ -54,6 +55,11 @@ export class TransportMapComponent implements OnInit {
 
     this.mapDataService.routes.subscribe((routes) => {
       this.routes = routes;
+      if (!this.isInitialized && routes.length) {
+        this.mapDataService.updateRouteDetailsOnceInBackground(routes);
+        this.mapDataService.updateVehiclesInBackground(routes);
+        this.isInitialized = true;
+      }
     });
 
     this.mapDataService.vehiclesGeoData.subscribe((vehicleGeoData) => {
@@ -64,8 +70,12 @@ export class TransportMapComponent implements OnInit {
     this.mapDataService.updateRoutes();
   }
 
+  ngOnDestroy() {
+    this.mapDataService.stopUpdatingRouteDetails();
+    this.mapDataService.stopUpdatingVehicles();
+  }
+
   onFilterChange(selection) {
-    // this.mapDataService.removeAllVehicles();
-    // this.updateMapSubscription = this.mapDataService.updateMap(selection.value).subscribe();
+    this.mapDataService.updateVehiclesInBackground(selection.value);
   }
 }

@@ -5,7 +5,7 @@ import 'rxjs/add/observable/timer';
 
 import { ControlledStream } from './ControlledStream';
 
-export function doLazyStream<T = any>(routes: T[], routesPerBatch = 2, interval = 3000): Observable<T> {
+export function doLazyStream<T = any>(routes: T[], routesPerBatch = 10, interval = 10000): Observable<T> {
   const stream = new ControlledStream<T>(routes);
   let timerSubscription: Subscription;
   let streamSubscription: Subscription;

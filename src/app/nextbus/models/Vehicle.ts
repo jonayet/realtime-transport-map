@@ -7,4 +7,5 @@ export interface Vehicle {
   lon: number;
   secsSinceReport: number;
   color: string;
+  show: boolean;
 }

@@ -15,7 +15,8 @@ export function transformVehicles(route: Route, vehicleLocations: VehicleLocatio
         heading: heading >= 0 ? heading : 0,
         speedKmHr: Number(vehicle.speedKmHr),
         secsSinceReport: Number(vehicle.secsSinceReport),
-        color: route.color
+        color: route.color,
+        show: route.show
       };
       return vehiclesMap;
     }, {} as Vehicles);

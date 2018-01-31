@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
-import { Route, Routes, RouteList, Vehicles, VehicleLocations } from '../models';
-import { transformRoutes, transformVehicles } from '../transformers';
+import { Route, Routes, RouteList, RouteConfig, Vehicles, VehicleLocations } from '../models';
+import { transformRoutes, transformVehicles, transformRouteDetails } from '../transformers';
 
 import 'rxjs/add/operator/map';
 
@@ -17,15 +17,20 @@ export class NextbusService {
 
   getRoutes(): Observable<Routes> {
     const routesUrl = `${this.baseUrl}?command=routeList&a=${this.agency}`;
-    return this.http.get<RouteList>(routesUrl).map(result => transformRoutes(result));
+    return this.http.get<RouteList>(routesUrl).map(routeList => transformRoutes(routeList));
   }
 
   getVehicles(route: Route): Observable<Vehicles> {
     const lastRequestTime = this.lastRequestTimeMap[route.tag] || 0;
     const routesUrl = `${this.baseUrl}?command=vehicleLocations&a=${this.agency}&r=${route.tag}&t=${lastRequestTime}`;
-    return this.http.get<VehicleLocations>(routesUrl).map(result => {
-      this.lastRequestTimeMap[route.tag] = result.lastTime.time;
-      return transformVehicles(route, result);
+    return this.http.get<VehicleLocations>(routesUrl).map(vehicleLocations => {
+      this.lastRequestTimeMap[route.tag] = vehicleLocations.lastTime.time;
+      return transformVehicles(route, vehicleLocations);
     });
+  }
+
+  updateRouteDetails(route: Route): Observable<Routes> {
+    const routesUrl = `${this.baseUrl}?command=routeConfig&a=${this.agency}&r=${route.tag}`;
+    return this.http.get<RouteConfig>(routesUrl).map(routeConfig => transformRouteDetails(route, routeConfig));
   }
 }

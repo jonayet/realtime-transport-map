@@ -35,4 +35,8 @@ export class ControlledStream<T> {
       }
     }
   }
+
+  hasLeft() {
+    return this.streamData.length - this.streamIndex;
+  }
 }

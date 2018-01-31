@@ -1,4 +1,6 @@
-import { RouteList, Routes} from '../models';
+import { RouteList, Routes, Route, RouteConfig} from '../models';
+
+const defaultRouteColor = '#011a8e';
 
 export function transformRoutes(routeList: RouteList): Routes {
   if (!routeList.route || !routeList.route.length) {
@@ -8,11 +10,33 @@ export function transformRoutes(routeList: RouteList): Routes {
     routesMap[route.tag] = {
         tag: route.tag,
         title: route.title,
-        color: randomColor()
+        color: defaultRouteColor,
+        isUpdated: false
       };
       return routesMap;
     }, {} as Routes);
   return routes;
+}
+
+export function transformRouteDetails(route: Route, routeConfig: RouteConfig): Routes {
+  const detailsRaw = routeConfig.route;
+  if (!detailsRaw) {
+    return {};
+  }
+  const routeDetails: Route = {
+    color: `#${detailsRaw.color}`,
+    latMax: Number(detailsRaw.latMax),
+    latMin: Number(detailsRaw.latMin),
+    lonMax: Number(detailsRaw.lonMax),
+    lonMin: Number(detailsRaw.lonMin),
+    tag: detailsRaw.tag,
+    title: detailsRaw.title,
+    show: route.show,
+    isUpdated: true
+  };
+  return {
+    [route.tag]: routeDetails
+  };
 }
 
 function randomColor() {

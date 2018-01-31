@@ -1,28 +1,27 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
-import { Subscriber } from 'rxjs/Subscriber';
-import { Subject } from 'rxjs/Subject';
 import { Store, select } from '@ngrx/store';
 
 import { GeoData, GeoFeature } from '../models';
 import { Route, Routes, Vehicles } from '../../nextbus/models';
 import { State, StreetsStore, RoutesStore, VehiclesStore } from '../../store';
 import { UpdateStreets } from '../../store/streets';
-import { UpdateRoutes } from '../../store/routes';
+import { UpdateRoutes, UpdateRouteDetails } from '../../store/routes';
 import { UpdateVehicles, RemoveAllVehicles } from '../../store/vehicles';
-import { convertToArray, convertToGeoData, ControlledStream } from '../utilities';
+import { convertToArray, convertToGeoData, doLazyStream } from '../utilities';
 
-import 'rxjs/add/observable/from';
-import 'rxjs/add/observable/timer';
 
 @Injectable()
 export class MapDataService {
   streetsGeoData: Observable<GeoData>;
   routes: Observable<Route[]>;
+  routeCache: Route[];
   vehiclesGeoData: Observable<GeoData>;
+  private isRouteDetailsUpdated = false;
+  private isRouteDetailsUpdateing = false;
 
   constructor(private store: Store<State>) {
+    this.routeCache = [];
     this.streetsGeoData = store.pipe(select(StreetsStore));
     this.routes = store.pipe(select(RoutesStore)).map((routes) => convertToArray(routes, (r) => r));
     this.vehiclesGeoData = store.pipe(select(VehiclesStore)).map((vehicles) => {
@@ -30,9 +29,16 @@ export class MapDataService {
     });
 
     this.routes.subscribe((routes) => {
+      console.log(routes);
+      this.routeCache = [].concat(routes);
       if (!routes || !routes.length) {
         return;
       }
+
+      if (!this.isRouteDetailsUpdated && !this.isRouteDetailsUpdateing) {
+        this.updateRouteDetailsInBackground();
+      }
+      // this.updateRouteDetails(routes);
 
       // const subscription = this.updateMap(routes).subscribe();
 
@@ -43,71 +49,57 @@ export class MapDataService {
     });
   }
 
-  updateMap(routes: Route[], reqPerBatch = 10, interval = 10000): Observable<void> {
-    let internalObserver: Subscriber<void>;
-    let externalObserver: Subscriber<void>;
-    let updateMapSubscription: Subscription;
-    let timerSubscription: Subscription;
-
-    const internalSubscription = new Observable<void>(observer => {
-      internalObserver = observer;
-      internalObserver.next();
-      return () => {
-        updateMapSubscription.unsubscribe();
-        timerSubscription.unsubscribe();
-        internalObserver.unsubscribe();
-      };
-    }).subscribe(() => {
-      updateMapSubscription = this.updateMapOnce(routes, reqPerBatch, interval).subscribe(() => {
-        externalObserver.next();
-        timerSubscription = Observable.timer(interval).subscribe(() => {
-          internalObserver.next();
-        });
-      });
+  updateRouteDetailsInBackground() {
+    this.isRouteDetailsUpdateing = true;
+    this.isRouteDetailsUpdated = false;
+    doLazyStream<Route>(this.routeCache, 5, 10000).subscribe((route) => {
+      if (!route.isUpdated) {
+        this.store.dispatch(new UpdateRouteDetails(route));
+      }
+    }, (error) => {
+      console.log(error);
+      this.isRouteDetailsUpdateing = false;
+    }, () => {
+      this.isRouteDetailsUpdateing = false;
+      this.isRouteDetailsUpdated = true;
     });
-
-    const externalObservable = new Observable<void>(observer => {
-      externalObserver = observer;
-      return () => {
-        internalSubscription.unsubscribe();
-        externalObserver.unsubscribe();
-      };
-    });
-    return externalObservable;
   }
 
-  private updateMapOnce(routes: Route[], reqPerBatch = 10, interval = 10000): Observable<void> {
-    const stream = new ControlledStream<Route>(routes);
-    let timerSubscription: Subscription;
-    let streamSubscription: Subscription;
-    let observer: Subscriber<void>;
+  // updateMap(routes: Route[], reqPerBatch = 10, interval = 10000): Observable<void> {
+  //   let internalObserver: Subscriber<void>;
+  //   let externalObserver: Subscriber<void>;
+  //   let updateMapSubscription: Subscription;
+  //   let timerSubscription: Subscription;
 
-    const observable = new Observable<void>(_observer => {
-      observer = _observer;
-      return () => {
-        streamSubscription.unsubscribe();
-        timerSubscription.unsubscribe();
-        observer.unsubscribe();
-      };
-    });
+  //   const internalSubscription = new Observable<void>(observer => {
+  //     internalObserver = observer;
+  //     internalObserver.next();
+  //     return () => {
+  //       updateMapSubscription.unsubscribe();
+  //       timerSubscription.unsubscribe();
+  //       internalObserver.unsubscribe();
+  //     };
+  //   }).subscribe(() => {
+  //     updateMapSubscription = this.updateVehiclesOnceLazily(routes, reqPerBatch, interval).subscribe(() => {
+  //       externalObserver.next();
+  //       timerSubscription = Observable.timer(interval).subscribe(() => {
+  //         internalObserver.next();
+  //       });
+  //     });
+  //   });
 
-    console.log('-------Start-------', new Date().toISOString());
-    streamSubscription = stream.source.subscribe((route) => {
-      this.store.dispatch(new UpdateVehicles(route));
-    }, (err) => {
-      observer.error();
-    }, () => {
-      timerSubscription.unsubscribe();
-      observer.next();
-      observer.complete();
-      console.log('-------Finish-------', new Date().toISOString());
-    });
+  //   const externalObservable = new Observable<void>(observer => {
+  //     externalObserver = observer;
+  //     return () => {
+  //       internalSubscription.unsubscribe();
+  //       externalObserver.unsubscribe();
+  //     };
+  //   });
+  //   return externalObservable;
+  // }
 
-    timerSubscription = Observable.timer(0, interval).subscribe(() => {
-      stream.request(reqPerBatch);
-    });
-
-    return observable;
+  updateVehicles(route: Route) {
+    this.store.dispatch(new UpdateVehicles(route));
   }
 
   updateStreets() {
@@ -116,10 +108,6 @@ export class MapDataService {
 
   updateRoutes() {
     this.store.dispatch(new UpdateRoutes());
-  }
-
-  updateVehicles(route: Route) {
-    this.store.dispatch(new UpdateVehicles(route));
   }
 
   removeAllVehicles() {

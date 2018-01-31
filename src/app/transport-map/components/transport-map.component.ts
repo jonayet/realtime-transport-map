@@ -34,7 +34,6 @@ export class TransportMapComponent implements OnInit {
 
   private routeLayer: MapLayer;
   private transportLayer: MapLayer;
-  private updateMapSubscription;
 
   routesControl = new FormControl();
   routes: Route[];
@@ -55,7 +54,6 @@ export class TransportMapComponent implements OnInit {
 
     this.mapDataService.routes.subscribe((routes) => {
       this.routes = routes;
-      this.updateMapSubscription = this.mapDataService.updateMap(routes).subscribe();
     });
 
     this.mapDataService.vehiclesGeoData.subscribe((vehicleGeoData) => {
@@ -67,10 +65,7 @@ export class TransportMapComponent implements OnInit {
   }
 
   onFilterChange(selection) {
-    if (this.updateMapSubscription) {
-      this.updateMapSubscription.unsubscribe();
-    }
-    this.mapDataService.removeAllVehicles();
-    this.updateMapSubscription = this.mapDataService.updateMap(selection.value).subscribe();
+    // this.mapDataService.removeAllVehicles();
+    // this.updateMapSubscription = this.mapDataService.updateMap(selection.value).subscribe();
   }
 }

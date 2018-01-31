@@ -1,61 +1,45 @@
-import { Route, VehicleLocationsRaw, VehicleLocationRaw } from '../models';
-import { transformVehicleLocation } from './vehicle.transformer';
+import { Route, VehicleLocations, VehicleRaw, Vehicle } from '../models';
+import { transformVehicles } from './vehicle.transformer';
 
-describe('Route Location Transformer', () => {
-  it('location should have a key with same as vehicle.tag', () => {
-    const vehicle = mockVehicle();
-    const locationRaw = mockVehicleLocations();
-    const location = transformVehicleLocation(vehicle, locationRaw);
-    expect(location[vehicle.tag]).toBeDefined();
+describe('Vehicle Transformer', () => {
+  it('vehicles should have a unqique key with same as route.tag + vehicle.id', () => {
+    const route = mockRoute();
+    const vehicleLocations = mockVehicleLocations({vehicle: [mockVehicle({id: '123'})]});
+    const vehicles = transformVehicles(route, vehicleLocations);
+    expect(vehicles[route.tag + '123']).toBeDefined();
   });
 
-  it('location should contain {lat, lon} from locationRaw', () => {
-    const vehicle = mockVehicle();
-    const locationRaw = mockVehicleLocations({vehicle: [mockVehicleLocation({lon: '321', lat: '123', })]});
-    const location = transformVehicleLocation(vehicle, locationRaw);
-    expect(location[vehicle.tag]).toEqual([321, 123]);
+  it('vehicles should contain {lat, lon} from vehicleLocations.vehicle', () => {
+    const route = mockRoute();
+    const vehicleLocations = mockVehicleLocations({vehicle: [mockVehicleLocations({id: '111', lon: '321', lat: '123'})]});
+    const vehicles = transformVehicles(route, vehicleLocations);
+    expect(vehicles[route.tag + '111'].lat).toEqual(123);
+    expect(vehicles[route.tag + '111'].lon).toEqual(321);
   });
 
-  it('location should contain empty array if locationRaw.vehicle = []', () => {
-    const vehicle = mockVehicle();
-    const locationRaw = mockVehicleLocations({vehicle: []});
-    const location = transformVehicleLocation(vehicle, locationRaw);
-    expect(location[vehicle.tag]).toEqual([]);
+  it('vehicles should stay empty if vehicleLocations.vehicle = undefined or empty []', () => {
+    const route = mockRoute();
+    let vehicleLocations = mockVehicleLocations({vehicle: []});
+    let vehicles = transformVehicles(route, vehicleLocations);
+    expect(Object.keys(vehicles).length).toEqual(0);
+
+    vehicleLocations = mockVehicleLocations({vehicle: undefined});
+    vehicles = transformVehicles(route, vehicleLocations);
+    expect(Object.keys(vehicles).length).toEqual(0);
   });
 
-  it('location should contain empty array if locationRaw.vehicle = undefined', () => {
-    const vehicle = mockVehicle();
-    const locationRaw = mockVehicleLocations({vehicle: undefined});
-    const location = transformVehicleLocation(vehicle, locationRaw);
-    expect(location[vehicle.tag]).toEqual([]);
+  it('vehicle should contain secsSinceReport', () => {
+    const route = mockRoute();
+    const vehicleLocations = mockVehicleLocations({vehicle: [mockVehicleLocations({id: '111', secsSinceReport: '46578'})]});
+    const vehicle = transformVehicles(route, vehicleLocations);
+    expect(vehicle[route.tag + '111'].secsSinceReport).toEqual(46578);
   });
 
-  it('location should contain most recent location from locationRaw.vehicle', () => {
-    const vehicle = mockVehicle();
-    const locations = [
-      mockVehicleLocation({lon: '4', lat: '3', secsSinceReport: '3'}),
-      mockVehicleLocation({lon: '6', lat: '5', secsSinceReport: '9'}),
-      mockVehicleLocation({lon: '2', lat: '1', secsSinceReport: '7'}),
-      mockVehicleLocation({lon: '8', lat: '7', secsSinceReport: '1'}),
-      mockVehicleLocation({lon: '10', lat: '9', secsSinceReport: undefined}),
-    ];
-    const locationRaw = mockVehicleLocations({vehicle: locations});
-    const location = transformVehicleLocation(vehicle, locationRaw);
-    expect(location[vehicle.tag]).toEqual([8, 7]);
-  });
-
-  it('location should contain first location if locationRaw.vehicle{secsSinceReport} are undeffined', () => {
-    const vehicle = mockVehicle();
-    const locations = [
-      mockVehicleLocation({lon: '2', lat: '1', secsSinceReport: undefined}),
-      mockVehicleLocation({lon: '4', lat: '3', secsSinceReport: undefined}),
-      mockVehicleLocation({lon: '6', lat: '5', secsSinceReport: undefined}),
-      mockVehicleLocation({lon: '8', lat: '7', secsSinceReport: undefined}),
-      mockVehicleLocation({lon: '10', lat: '9', secsSinceReport: undefined}),
-    ];
-    const locationRaw = mockVehicleLocations({vehicle: locations});
-    const location = transformVehicleLocation(vehicle, locationRaw);
-    expect(location[vehicle.tag]).toEqual([2, 1]);
+  it('vehicle should contain color from route.color', () => {
+    const route = mockRoute();
+    const vehicleLocations = mockVehicleLocations({vehicle: [mockVehicleLocations({id: '111'})]});
+    const vehicle = transformVehicles(route, vehicleLocations);
+    expect(vehicle[route.tag + '111'].color).toEqual(route.color);
   });
 });
 
@@ -63,42 +47,44 @@ function chooseFromList(data) {
   return data[Math.round(Math.random() * (data.length - 1))];
 }
 
-function mockVehicle({...props} = {}): Route {
-  const vehicle: Route = {
+function mockRoute({...props} = {}): Route {
+  const route: Route = {
     tag: chooseFromList(['E', 'F', 'G', 'H']),
     title: chooseFromList(['E Bus', 'F Train', 'G Tarm', 'H Metro']),
+    color: chooseFromList(['red', 'green', 'blue']),
     ...props
   };
-  return vehicle;
+  return route;
 }
 
-function mockVehicleLocation({...props} = {}): VehicleLocationRaw {
-  const location: VehicleLocationRaw = {
+function mockVehicle({...props} = {}): VehicleRaw {
+  const vehicle: VehicleRaw = {
         id: Math.round(Math.random() * 1000).toString(),
-        lat: (Math.random() * 1000).toFixed(2),
-        lon: (Math.random() * 1000).toFixed(2),
-        heading: chooseFromList(['east', 'west', 'north', 'south']),
+        lat: (Math.random() * 1000).toFixed(6),
+        lon: (Math.random() * 1000).toFixed(6),
+        dirTag: chooseFromList(['east', 'west', 'north', 'south']),
+        heading:  Math.round(Math.random() * 360).toString(),
         predictable: chooseFromList(['true', 'false']),
         routeTag: chooseFromList(['E', 'F', 'G', 'H']),
         secsSinceReport: Math.round(Math.random() * 100).toString(),
         speedKmHr: Math.round(Math.random() * 100).toString(),
         ...props
       };
-    return location;
+    return vehicle;
 }
 
-function mockVehicleLocations({...props} = {}): VehicleLocationsRaw {
+function mockVehicleLocations({...props} = {}): VehicleLocations {
   const noOfRoutes = Math.round(Math.random() * 5);
-  const routes = Array.from(Array(noOfRoutes).keys()).map(() => {
-    return mockVehicleLocation();
+  const vehicles = Array.from(Array(noOfRoutes).keys()).map(() => {
+    return mockVehicle();
   });
 
-  const location: VehicleLocationsRaw = {
-    vehicle: routes,
+  const vehicleLocations: VehicleLocations = {
+    vehicle: vehicles,
     lastTime: {
-      time: 0
+      time: Math.round(Math.random() * 100).toString()
     },
     ...props
   };
-  return location;
+  return vehicleLocations;
 }

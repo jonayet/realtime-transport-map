@@ -1,1 +1,15 @@
-<div class='host' #mapHost></div>
+<div class='host'>
+  <div #mapHost class='map'></div>
+  <div class='control'>
+    <mat-form-field>
+      <mat-select placeholder='Filter Routes' [formControl]='routesControl' (selectionChange)='onFilterChange($event)' multiple>
+        <mat-option *ngFor='let route of routes' [value]='route'>
+          <div class='filter-item'>
+              {{route.title}}
+          </div>
+          <div class='filter-item route-color' [style.backgroundColor]='route.color'></div>
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+</div>

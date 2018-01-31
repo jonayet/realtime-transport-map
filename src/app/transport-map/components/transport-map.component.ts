@@ -1,6 +1,8 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { select, zoom, event, geoMercator, geoPath } from 'd3';
 
+import { Route } from '../../nextbus/models';
 import { MapLayer, LayerOptions } from '../models';
 import { MapViewService, MapDataService } from '../services';
 
@@ -14,7 +16,7 @@ export class TransportMapComponent implements OnInit {
   @ViewChild('mapHost') private hostElement: ElementRef;
 
   private projectionOption = {
-    scale: 300000,
+    scale: 1000000,
     centroid: [-122.45, 37.76]
   };
 
@@ -32,6 +34,10 @@ export class TransportMapComponent implements OnInit {
 
   private routeLayer: MapLayer;
   private transportLayer: MapLayer;
+  private updateMapSubscription;
+
+  routesControl = new FormControl();
+  routes: Route[];
 
   constructor(
     private mapViewService: MapViewService,
@@ -47,11 +53,30 @@ export class TransportMapComponent implements OnInit {
       this.mapViewService.drawRouteLayer(this.routeLayer, streetsGeoData);
     });
 
-    this.mapDataService.vehicleGeoData.subscribe((vehicleGeoData) => {
+    this.mapDataService.routes.subscribe((routes) => {
+      this.routes = routes;
+    });
+
+    this.mapDataService.vehiclesGeoData.subscribe((vehicleGeoData) => {
       this.mapViewService.drawTransportLayer(this.transportLayer, vehicleGeoData);
     });
 
     this.mapDataService.updateStreets();
     this.mapDataService.updateRoutes();
+  }
+
+  onFilterChange(selection) {
+    if (this.updateMapSubscription) {
+      this.updateMapSubscription.unsubscribe();
+    }
+    // this.mapDataService.removeAllVehicles();
+
+    selection.value.forEach(route => {
+      this.mapDataService.updateVehicles(route);
+    });
+
+    // if (selection.value.length) {
+    //   this.updateMapSubscription = this.mapDataService.updateMap(selection.value).subscribe();
+    // }
   }
 }

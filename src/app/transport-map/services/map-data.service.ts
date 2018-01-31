@@ -10,7 +10,7 @@ import { Route, Routes, Vehicles } from '../../nextbus/models';
 import { State, StreetsStore, RoutesStore, VehiclesStore } from '../../store';
 import { UpdateStreets } from '../../store/streets';
 import { UpdateRoutes } from '../../store/routes';
-import { UpdateVehicles } from '../../store/vehicles';
+import { UpdateVehicles, RemoveAllVehicles } from '../../store/vehicles';
 import { convertToArray, convertToGeoData, ControlledStream } from '../utilities';
 
 import 'rxjs/add/observable/from';
@@ -21,14 +21,12 @@ export class MapDataService {
   streets: Observable<GeoData>;
   streetsGeoData: Observable<GeoData>;
   routes: Observable<Route[]>;
-  vehicles: Observable<Vehicles>;
-  vehicleGeoData: Observable<GeoData>;
+  vehiclesGeoData: Observable<GeoData>;
 
   constructor(private store: Store<State>) {
     this.streetsGeoData = store.pipe(select(StreetsStore));
     this.routes = store.pipe(select(RoutesStore)).map((routes) => convertToArray(routes, (r) => r));
-    this.vehicles = store.pipe(select(VehiclesStore));
-    this.vehicleGeoData = this.vehicles.map((vehicles) => {
+    this.vehiclesGeoData = store.pipe(select(VehiclesStore)).map((vehicles) => {
       return convertToGeoData(vehicles);
     });
 
@@ -37,7 +35,7 @@ export class MapDataService {
         return;
       }
 
-      const subscription = this.updateMap(routes).subscribe();
+      // const subscription = this.updateMap(routes).subscribe();
 
       // setInterval(() => {
       //   this.store.dispatch(new UpdateVehicles(routes[0]));
@@ -46,7 +44,7 @@ export class MapDataService {
     });
   }
 
-  private updateMap(routes: Route[], reqPerBatch = 20, interval = 10000): Observable<void> {
+  updateMap(routes: Route[], reqPerBatch = 10, interval = 10000): Observable<void> {
     let internalObserver: Subscriber<void>;
     let externalObserver: Subscriber<void>;
     let updateMapSubscription: Subscription;
@@ -75,7 +73,7 @@ export class MapDataService {
     return observable;
   }
 
-  private updateMapOnce(routes: Route[], reqPerBatch = 10, interval = 2000): Observable<void> {
+  private updateMapOnce(routes: Route[], reqPerBatch = 10, interval = 10000): Observable<void> {
     const stream = new ControlledStream<Route>(routes);
     let timerSubscription: Subscription;
     let streamSubscription: Subscription;
@@ -90,7 +88,7 @@ export class MapDataService {
       };
     });
 
-    // console.log('-------Start-------', new Date().toISOString());
+    console.log('-------Start-------', new Date().toISOString());
     streamSubscription = stream.source.subscribe((route) => {
       this.store.dispatch(new UpdateVehicles(route));
     }, (err) => {
@@ -99,7 +97,7 @@ export class MapDataService {
       timerSubscription.unsubscribe();
       observer.next();
       observer.complete();
-      // console.log('-------Finish-------', new Date().toISOString());
+      console.log('-------Finish-------', new Date().toISOString());
     });
 
     timerSubscription = Observable.timer(0, interval).subscribe(() => {
@@ -115,5 +113,13 @@ export class MapDataService {
 
   updateRoutes() {
     this.store.dispatch(new UpdateRoutes());
+  }
+
+  updateVehicles(route: Route) {
+    this.store.dispatch(new UpdateVehicles(route));
+  }
+
+  removeAllVehicles() {
+    this.store.dispatch(new RemoveAllVehicles());
   }
 }

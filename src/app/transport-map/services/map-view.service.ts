@@ -7,7 +7,7 @@ import { MapLayer, LayerOptions, ProjectionOptions, GeoData, GeoFeature } from '
 export class MapViewService {
   private projection: GeoProjection;
   private path: any;
-  private vehicleTriangle = '1,0 0,3 2,3';
+  private vehicleTriangle = '3,0 0,9 6,9';
 
   constructor() { }
 

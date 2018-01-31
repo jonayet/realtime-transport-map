@@ -17,6 +17,7 @@ export class TransportMapComponent implements OnInit, OnDestroy {
 
   routesControl = new FormControl();
   routes: Route[];
+  initialFilteredRoutes: Route[];
   isInitialized = false;
 
   private projectionOption = {
@@ -56,8 +57,9 @@ export class TransportMapComponent implements OnInit, OnDestroy {
     this.mapDataService.routes.subscribe((routes) => {
       this.routes = routes;
       if (!this.isInitialized && routes.length) {
+        this.initialFilteredRoutes = [routes[0]];
         this.mapDataService.updateRouteDetailsOnceInBackground(routes);
-        this.mapDataService.updateVehiclesInBackground(routes);
+        this.mapDataService.updateVehiclesInBackground([routes[0]]);
         this.isInitialized = true;
       }
     });

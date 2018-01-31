@@ -55,6 +55,7 @@ export class TransportMapComponent implements OnInit {
 
     this.mapDataService.routes.subscribe((routes) => {
       this.routes = routes;
+      this.updateMapSubscription = this.mapDataService.updateMap(routes).subscribe();
     });
 
     this.mapDataService.vehiclesGeoData.subscribe((vehicleGeoData) => {
@@ -69,14 +70,7 @@ export class TransportMapComponent implements OnInit {
     if (this.updateMapSubscription) {
       this.updateMapSubscription.unsubscribe();
     }
-    // this.mapDataService.removeAllVehicles();
-
-    selection.value.forEach(route => {
-      this.mapDataService.updateVehicles(route);
-    });
-
-    // if (selection.value.length) {
-    //   this.updateMapSubscription = this.mapDataService.updateMap(selection.value).subscribe();
-    // }
+    this.mapDataService.removeAllVehicles();
+    this.updateMapSubscription = this.mapDataService.updateMap(selection.value).subscribe();
   }
 }

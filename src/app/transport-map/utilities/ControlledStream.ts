@@ -20,6 +20,10 @@ export class ControlledStream<T> {
   }
 
   request(count: number) {
+    if (!this.observer.closed && this.streamData.length === 0) {
+      this.observer.complete();
+      return;
+    }
     for (let i = 0; i < count; i++) {
       if (this.observer.closed) {
         return;

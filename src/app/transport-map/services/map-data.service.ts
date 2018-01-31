@@ -18,7 +18,6 @@ import 'rxjs/add/observable/timer';
 
 @Injectable()
 export class MapDataService {
-  streets: Observable<GeoData>;
   streetsGeoData: Observable<GeoData>;
   routes: Observable<Route[]>;
   vehiclesGeoData: Observable<GeoData>;
@@ -48,29 +47,33 @@ export class MapDataService {
     let internalObserver: Subscriber<void>;
     let externalObserver: Subscriber<void>;
     let updateMapSubscription: Subscription;
+    let timerSubscription: Subscription;
 
     const internalSubscription = new Observable<void>(observer => {
       internalObserver = observer;
-      observer.next();
+      internalObserver.next();
       return () => {
         updateMapSubscription.unsubscribe();
-        observer.unsubscribe();
+        timerSubscription.unsubscribe();
+        internalObserver.unsubscribe();
       };
     }).subscribe(() => {
       updateMapSubscription = this.updateMapOnce(routes, reqPerBatch, interval).subscribe(() => {
-        internalObserver.next();
         externalObserver.next();
+        timerSubscription = Observable.timer(interval).subscribe(() => {
+          internalObserver.next();
+        });
       });
     });
 
-    const observable = new Observable<void>(observer => {
+    const externalObservable = new Observable<void>(observer => {
       externalObserver = observer;
       return () => {
         internalSubscription.unsubscribe();
-        observer.unsubscribe();
+        externalObserver.unsubscribe();
       };
     });
-    return observable;
+    return externalObservable;
   }
 
   private updateMapOnce(routes: Route[], reqPerBatch = 10, interval = 10000): Observable<void> {

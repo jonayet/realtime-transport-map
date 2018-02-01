@@ -7,3 +7,6 @@ export * from './Vehicle';
 export * from './VehicleRaw';
 export * from './Vehicles';
 export * from './VehicleLocations';
+export * from './Stop';
+export * from './Stops';
+export * from './StopRaw';

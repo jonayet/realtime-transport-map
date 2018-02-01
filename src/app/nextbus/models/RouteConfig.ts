@@ -1,11 +1,4 @@
-export interface Stop {
-  tag: string;
-  title: string;
-  shortTitle: string;
-  lat: string;
-  lon: string;
-  stopId: string;
-}
+import { StopRaw } from './StopRaw';
 
 export interface Direction {
   tag: string;
@@ -29,7 +22,7 @@ export interface RouteConfig {
     latMax: string;
     lonMin: string;
     lonMax: string;
-    stop: Stop[];
+    stop: StopRaw[];
     direction: Direction[];
     path: [{
       point: [

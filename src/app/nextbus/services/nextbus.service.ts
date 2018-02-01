@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
-
-import { Route, Routes, RouteList, RouteConfig, Vehicles, VehicleLocations } from '../models';
-import { transformRoutes, transformVehicles, transformRouteDetails } from '../transformers';
-
 import 'rxjs/add/operator/map';
+
+import { Route, Routes, Stop, RouteList, RouteConfig, Vehicles, VehicleLocations } from '../models';
+import { transformRoutes, transformVehicles, transformRouteDetails, transformStops } from '../transformers';
 
 @Injectable()
 export class NextbusService {
@@ -29,8 +28,8 @@ export class NextbusService {
     });
   }
 
-  updateRouteDetails(route: Route): Observable<Routes> {
+  updateRouteDetails(route: Route): Observable<RouteConfig> {
     const routesUrl = `${this.baseUrl}?command=routeConfig&a=${this.agency}&r=${route.tag}`;
-    return this.http.get<RouteConfig>(routesUrl).map(routeConfig => transformRouteDetails(route, routeConfig));
+    return this.http.get<RouteConfig>(routesUrl);
   }
 }

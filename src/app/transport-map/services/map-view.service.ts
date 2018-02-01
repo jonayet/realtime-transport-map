@@ -59,7 +59,7 @@ export class MapViewService {
     return layer;
   }
 
-  drawRouteLayer(layer: MapLayer, geoData: any) {
+  drawStreetsLayer(layer: MapLayer, geoData: any) {
     if (!geoData || !geoData.features) {
       return;
     }
@@ -77,7 +77,7 @@ export class MapViewService {
       .remove();
   }
 
-  drawTransportLayer(layer: MapLayer, geoData: any) {
+  drawVehiclesLayer(layer: MapLayer, geoData: any) {
     if (!geoData || !geoData.features) {
       return;
     }
@@ -89,11 +89,31 @@ export class MapViewService {
       .append('polygon')
       .merge(nodes)
       .attr('points', this.vehicleTriangle)
-      .style('fill', (d: any) => d.properties.color)
       .attr('transform', (d: any) => {
         const transform = `translate(${this.projection(d.geometry.coordinates)})`;
         return d.properties.heading >= 0 ? transform + `rotate(${d.properties.heading})` : transform;
-      });
+      })
+      .style('fill', (d: any) => d.properties.color);
+
+    nodes.exit()
+      .remove();
+  }
+
+  drawStopsLayer(layer: MapLayer, geoData: any) {
+    if (!geoData || !geoData.features) {
+      return;
+    }
+
+    const nodes = layer.node.selectAll('rect')
+      .data(geoData.features);
+
+    nodes.enter()
+      .append('rect')
+      .merge(nodes)
+      .attr('width', '3')
+      .attr('height', '3')
+      .attr('transform', (d: any) => `translate(${this.projection(d.geometry.coordinates)})`)
+      .style('fill', (d: any) => d.properties.color);
 
     nodes.exit()
       .remove();

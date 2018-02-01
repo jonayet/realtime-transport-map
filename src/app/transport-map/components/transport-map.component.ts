@@ -37,8 +37,9 @@ export class TransportMapComponent implements OnInit, OnDestroy {
     fill: 'red'
   };
 
-  private routeLayer: MapLayer;
-  private transportLayer: MapLayer;
+  private streetsLayer: MapLayer;
+  private vehiclesLayer: MapLayer;
+  private stopsLayer: MapLayer;
 
   constructor(
     private mapViewService: MapViewService,
@@ -47,11 +48,12 @@ export class TransportMapComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const mapRootLayer = this.mapViewService.createMap(this.hostElement.nativeElement, this.rootLayerOptions, this.projectionOption);
-    this.routeLayer = this.mapViewService.createLayer(mapRootLayer, this.routeLayerOptions);
-    this.transportLayer = this.mapViewService.createLayer(mapRootLayer, this.transportLayerOptions);
+    this.streetsLayer = this.mapViewService.createLayer(mapRootLayer, this.routeLayerOptions);
+    this.vehiclesLayer = this.mapViewService.createLayer(mapRootLayer, this.transportLayerOptions);
+    this.stopsLayer = this.mapViewService.createLayer(mapRootLayer, this.transportLayerOptions);
 
     this.mapDataService.streetsGeoData.subscribe((streetsGeoData) => {
-      this.mapViewService.drawRouteLayer(this.routeLayer, streetsGeoData);
+      this.mapViewService.drawStreetsLayer(this.streetsLayer, streetsGeoData);
     });
 
     this.mapDataService.routes.subscribe((routes) => {
@@ -63,6 +65,7 @@ export class TransportMapComponent implements OnInit, OnDestroy {
         this.routes = routes;
         this.initialFilteredRoutes = [routes[0]];
         this.mapDataService.setVisibleVehicles([routes[0]]);
+        this.mapDataService.setVisibleStops([routes[0]]);
         this.mapDataService.updateRouteDetailsOnceInBackground(routes);
         this.mapDataService.updateVehiclesInBackground([routes[0]]);
         this.isInitialized = true;
@@ -70,7 +73,11 @@ export class TransportMapComponent implements OnInit, OnDestroy {
     });
 
     this.mapDataService.vehiclesGeoData.subscribe((vehicleGeoData) => {
-      this.mapViewService.drawTransportLayer(this.transportLayer, vehicleGeoData);
+      this.mapViewService.drawVehiclesLayer(this.vehiclesLayer, vehicleGeoData);
+    });
+
+    this.mapDataService.stopesGeoData.subscribe((stopsGeoData) => {
+      this.mapViewService.drawStopsLayer(this.stopsLayer, stopsGeoData);
     });
 
     this.mapDataService.updateStreets();
@@ -84,6 +91,7 @@ export class TransportMapComponent implements OnInit, OnDestroy {
 
   onFilterChange(selection) {
     this.mapDataService.setVisibleVehicles(selection.value);
+    this.mapDataService.setVisibleStops(selection.value);
     this.mapDataService.updateVehiclesInBackground(selection.value);
   }
 

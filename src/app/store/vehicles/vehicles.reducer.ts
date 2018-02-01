@@ -16,7 +16,7 @@ export function vehiclesReducer(state: Vehicles = {}, action: Actions): Vehicles
 
       convertToArray<Vehicle>(state, (r) => r).forEach((vehicle) => {
         const isVisible = !!routesMap[vehicle.routeTag];
-        vehicles[vehicle.routeTag + vehicle.id] = {...vehicle, show: isVisible};
+        vehicles[vehicle.routeTag + vehicle.id] = { ...vehicle, show: isVisible };
       });
       return vehicles;
     default:

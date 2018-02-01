@@ -2,13 +2,22 @@
   "name": "realtime-transport-map",
   "version": "0.0.0",
   "license": "MIT",
+  "author": {
+    "name": "Jonayet Hossain",
+    "email": "jonayet.bu@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jonayet/realtime-transport-map.git"
+  },
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build --prod",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "publish-gh-page": "ng build --prod --base-href \"https://jonayet.github.io/realtime-transport-map/\" && ngh"
   },
   "private": true,
   "dependencies": {
@@ -39,6 +48,7 @@
     "@types/jasmine": "~2.8.3",
     "@types/jasminewd2": "~2.0.2",
     "@types/node": "~6.0.60",
+    "angular-cli-ghpages": "^0.5.2",
     "codelyzer": "^4.0.1",
     "jasmine-core": "~2.8.0",
     "jasmine-spec-reporter": "~4.2.1",

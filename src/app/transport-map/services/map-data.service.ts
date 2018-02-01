@@ -8,7 +8,7 @@ import { GeoData, GeoFeature } from '../models';
 import { Route, Routes, Vehicles } from '../../nextbus/models';
 import { State, StreetsStore, RoutesStore, VehiclesStore, StopsStore } from '../../store';
 import { UpdateStreets } from '../../store/streets';
-import { UpdateRoutes, UpdateRouteDetails } from '../../store/routes';
+import { UpdateRoutes, UpdateRouteDetails, SetVisibleRoutes } from '../../store/routes';
 import { UpdateVehicles, SetVisibleVehicles } from '../../store/vehicles';
 import { SetVisibleStops } from '../../store/stops';
 import { convertToArray, convertToGeoData, doLazyStream } from '../utilities';
@@ -67,6 +67,10 @@ export class MapDataService {
     if (this.vehicleStreamTimerSubscription) {
       this.vehicleStreamTimerSubscription.unsubscribe();
     }
+  }
+
+  setVisibleRoutes(routes: Route[]) {
+    this.store.dispatch(new SetVisibleRoutes(routes));
   }
 
   setVisibleVehicles(routes: Route[]) {

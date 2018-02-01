@@ -12,13 +12,14 @@ export function vehiclesReducer(state: Vehicles = {}, action: Actions): Vehicles
         map[route.tag] = true;
         return map;
       }, {});
-      const vehicles: Vehicles = {};
 
+      const vehicles: Vehicles = {};
       convertToArray<Vehicle>(state, (r) => r).forEach((vehicle) => {
         const isVisible = !!routesMap[vehicle.routeTag];
         vehicles[vehicle.routeTag + vehicle.id] = { ...vehicle, show: isVisible };
       });
       return vehicles;
+
     default:
       return state;
   }

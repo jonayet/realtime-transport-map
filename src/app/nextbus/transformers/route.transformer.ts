@@ -11,7 +11,8 @@ export function transformRoutes(routeList: RouteList): Routes {
         tag: route.tag,
         title: route.title,
         color: defaultRouteColor,
-        isUpdated: false
+        isUpdated: false,
+        show: false
       };
       return routesMap;
     }, {} as Routes);
@@ -31,7 +32,8 @@ export function transformRouteDetails(route: Route, routeConfig: RouteConfig): R
     lonMin: Number(detailsRaw.lonMin),
     tag: detailsRaw.tag,
     title: detailsRaw.title,
-    isUpdated: true
+    isUpdated: true,
+    show: route.show
   };
   return {
     [route.tag]: routeDetails

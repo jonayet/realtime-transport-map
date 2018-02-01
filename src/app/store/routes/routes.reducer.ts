@@ -10,6 +10,19 @@ export function routesReducer(state: Routes = {}, action: Actions): Routes {
     case ActionType.DETAILS_UPDATED:
       return Object.assign({}, state, action.payload);
 
+    case ActionType.SET_VISIBLE:
+      const routesMap = action.payload.reduce((map, route) => {
+        map[route.tag] = true;
+        return map;
+      }, {});
+
+      const routes: Routes = {};
+      convertToArray<Route>(state, (r) => r).forEach((route) => {
+        const isVisible = !!routesMap[route.tag];
+        routes[route.tag] = { ...route, show: isVisible };
+      });
+      return routes;
+
     default:
       return state;
   }

@@ -1,12 +1,12 @@
-import { RouteConfig, Stop, Stops } from '../models';
+import { Route, RouteConfig, Stop, Stops } from '../models';
 
-export function transformStops(routeConfig: RouteConfig): Stops {
+export function transformStops(route: Route, routeConfig: RouteConfig): Stops {
   const stops = routeConfig.route.stop.reduce((map, stopRaw) => {
     const stop: Stop = {
       color: `#${routeConfig.route.color}`,
       lat: stopRaw.lat,
       lon: stopRaw.lon,
-      show: true,
+      show: route.show,
       stopId: stopRaw.stopId,
       tag: stopRaw.tag,
       title: stopRaw.title,

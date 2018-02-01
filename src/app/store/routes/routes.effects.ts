@@ -26,7 +26,7 @@ export class RoutesEffects {
       .mergeMap(routeConfig => {
         return [
           new RouteDetailsUpdated(transformRouteDetails(action.payload, routeConfig)),
-          new UpdateStops(transformStops(routeConfig))
+          new UpdateStops(transformStops(action.payload, routeConfig))
         ];
       }));
 

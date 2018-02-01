@@ -17,8 +17,9 @@ export class TransportMapComponent implements OnInit, OnDestroy {
 
   routesControl = new FormControl();
   routes: Route[] = [];
-  initialFilteredRoutes: Route[];
+  filteredRoutes: Route[];
   isInitialized = false;
+  showStops = true;
 
   private projectionOption = {
     scale: 1000000,
@@ -63,11 +64,12 @@ export class TransportMapComponent implements OnInit, OnDestroy {
       this.updateRoutesCache(routes);
       if (!this.isInitialized && routes.length) {
         this.routes = routes;
-        this.initialFilteredRoutes = [routes[0]];
-        this.mapDataService.setVisibleVehicles([routes[0]]);
-        this.mapDataService.setVisibleStops([routes[0]]);
-        this.mapDataService.updateRouteDetailsOnceInBackground(routes);
-        this.mapDataService.updateVehiclesInBackground([routes[0]]);
+        this.filteredRoutes = [routes[0]];
+        // this.mapDataService.setVisibleRoutes(this.filteredRoutes);
+        this.mapDataService.setVisibleVehicles(this.filteredRoutes);
+        this.mapDataService.setVisibleStops(this.filteredRoutes);
+        this.mapDataService.updateRouteDetailsOnceInBackground(this.filteredRoutes);
+        this.mapDataService.updateVehiclesInBackground(this.filteredRoutes);
         this.isInitialized = true;
       }
     });
@@ -89,10 +91,18 @@ export class TransportMapComponent implements OnInit, OnDestroy {
     this.mapDataService.stopUpdatingVehicles();
   }
 
-  onFilterChange(selection) {
-    this.mapDataService.setVisibleVehicles(selection.value);
-    this.mapDataService.setVisibleStops(selection.value);
-    this.mapDataService.updateVehiclesInBackground(selection.value);
+  onCheckboxChange({checked}) {
+    this.showStops = checked;
+    this.mapDataService.setVisibleStops(this.showStops ? this.filteredRoutes : []);
+  }
+
+  onFilterChange({value}) {
+    this.filteredRoutes = value;
+    this.mapDataService.setVisibleRoutes(this.filteredRoutes);
+    this.mapDataService.setVisibleVehicles(this.filteredRoutes);
+    this.mapDataService.setVisibleStops(this.showStops ? this.filteredRoutes : []);
+    this.mapDataService.updateVehiclesInBackground(this.filteredRoutes);
+    this.mapDataService.updateRouteDetailsOnceInBackground(this.filteredRoutes);
   }
 
   private updateRoutesCache(routes: Route[]) {

@@ -9,10 +9,8 @@ import { Route, Routes, Vehicles } from '../../nextbus/models';
 import { State, StreetsStore, RoutesStore, VehiclesStore } from '../../store';
 import { UpdateStreets } from '../../store/streets';
 import { UpdateRoutes, UpdateRouteDetails } from '../../store/routes';
-import { UpdateVehicles, RemoveAllVehicles } from '../../store/vehicles';
+import { UpdateVehicles, SetVisibleVehicles } from '../../store/vehicles';
 import { convertToArray, convertToGeoData, doLazyStream } from '../utilities';
-
-
 
 @Injectable()
 export class MapDataService {
@@ -28,9 +26,7 @@ export class MapDataService {
     this.routeCache = [];
     this.streetsGeoData = store.pipe(select(StreetsStore));
     this.routes = store.pipe(select(RoutesStore)).map((routes) => convertToArray(routes, (r) => r));
-    this.vehiclesGeoData = store.pipe(select(VehiclesStore)).map((vehicles) => {
-      return convertToGeoData(vehicles);
-    });
+    this.vehiclesGeoData = store.pipe(select(VehiclesStore)).map((vehicles) => convertToGeoData(vehicles));
   }
 
   updateRouteDetailsOnceInBackground(routes: Route[]) {
@@ -70,6 +66,10 @@ export class MapDataService {
     }
   }
 
+  setVisibleVehicles(routes: Route[]) {
+    this.store.dispatch(new SetVisibleVehicles(routes));
+  }
+
   updateVehicles(route: Route) {
     this.store.dispatch(new UpdateVehicles(route));
   }
@@ -80,9 +80,5 @@ export class MapDataService {
 
   updateRoutes() {
     this.store.dispatch(new UpdateRoutes());
-  }
-
-  removeAllVehicles() {
-    this.store.dispatch(new RemoveAllVehicles());
   }
 }

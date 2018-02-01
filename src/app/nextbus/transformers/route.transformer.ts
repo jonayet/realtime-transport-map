@@ -31,16 +31,9 @@ export function transformRouteDetails(route: Route, routeConfig: RouteConfig): R
     lonMin: Number(detailsRaw.lonMin),
     tag: detailsRaw.tag,
     title: detailsRaw.title,
-    show: route.show,
     isUpdated: true
   };
   return {
     [route.tag]: routeDetails
   };
-}
-
-function randomColor() {
-  return '#' + 'rrggbb'.split('').reduce((prev) => {
-    return prev + ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'][Math.floor(Math.random() * 16)];
-  }, '');
 }

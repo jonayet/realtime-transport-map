@@ -6,7 +6,7 @@ export const enum ActionType {
   UPDATE = '[ROUTES] UPDATE',
   UPDATE_DETAILS = '[ROUTES] UPDATE_DETAILS',
   UPDATED = '[ROUTES] UPDATED',
-  DETAILS_UPDATED = '[ROUTES] DETAILS_UPDATE',
+  DETAILS_UPDATED = '[ROUTES] DETAILS_UPDATE'
 }
 
 export class UpdateRoutes implements Action {
@@ -31,4 +31,7 @@ export class RouteDetailsUpdated implements Action {
   constructor(public payload: Routes) {}
 }
 
-export type Actions = UpdateRoutes | RoutesUpdated | UpdateRouteDetails | RouteDetailsUpdated;
+export type Actions = UpdateRoutes
+| RoutesUpdated
+| UpdateRouteDetails
+| RouteDetailsUpdated;

@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/co
 import { FormControl } from '@angular/forms';
 import { select, zoom, event, geoMercator, geoPath } from 'd3';
 
-import { Route } from '../../nextbus/models';
+import { Route, Routes } from '../../nextbus/models';
 import { MapLayer, LayerOptions } from '../models';
 import { MapViewService, MapDataService } from '../services';
 
@@ -16,7 +16,7 @@ export class TransportMapComponent implements OnInit, OnDestroy {
   @ViewChild('mapHost') hostElement: ElementRef;
 
   routesControl = new FormControl();
-  routes: Route[];
+  routes: Route[] = [];
   initialFilteredRoutes: Route[];
   isInitialized = false;
 
@@ -55,9 +55,14 @@ export class TransportMapComponent implements OnInit, OnDestroy {
     });
 
     this.mapDataService.routes.subscribe((routes) => {
-      this.routes = routes;
+      if (!routes.length) {
+        return;
+      }
+      this.updateRoutesCache(routes);
       if (!this.isInitialized && routes.length) {
+        this.routes = routes;
         this.initialFilteredRoutes = [routes[0]];
+        this.mapDataService.setVisibleVehicles([routes[0]]);
         this.mapDataService.updateRouteDetailsOnceInBackground(routes);
         this.mapDataService.updateVehiclesInBackground([routes[0]]);
         this.isInitialized = true;
@@ -78,6 +83,24 @@ export class TransportMapComponent implements OnInit, OnDestroy {
   }
 
   onFilterChange(selection) {
+    this.mapDataService.setVisibleVehicles(selection.value);
     this.mapDataService.updateVehiclesInBackground(selection.value);
+  }
+
+  private updateRoutesCache(routes: Route[]) {
+    const updatedRoutes = routes.reduce((map, route) => {
+      map[route.tag] = route;
+      return map;
+    }, {} as Routes);
+
+    this.routes.forEach((route) => {
+      const updatedRoute = updatedRoutes[route.tag];
+      route.color = updatedRoute.color;
+      route.isUpdated = updatedRoute.isUpdated;
+      route.latMax = updatedRoute.latMax;
+      route.latMin = updatedRoute.latMin;
+      route.lonMax = updatedRoute.lonMax;
+      route.lonMin = updatedRoute.lonMin;
+    });
   }
 }

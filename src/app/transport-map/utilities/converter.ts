@@ -13,7 +13,7 @@ export function convertToArray<T = any>(source: {}, tranformFn: (item: any) => T
 
 export function convertToGeoData<T = any>(source: {}): GeoData<T> {
   const features = convertToArray<GeoFeature>(source, (item) => {
-    if (item.hide) {
+    if (item.show === false) {
       return;
     }
     const {lon, lat, ...properties} = item;

@@ -3,7 +3,7 @@
   <div class='control'>
     <div>
       <mat-form-field>
-        <mat-select placeholder='Filter Routes' [formControl]='routesControl' [ngModel]='filteredRoutes' (selectionChange)='onFilterChange($event)' multiple>
+        <mat-select placeholder='Filter Routes' [formControl]='routesControl' [(ngModel)]='filteredRoutes' (selectionChange)='onFilterChange()' multiple>
           <mat-option *ngFor='let route of routes' [value]='route'>
             <div class='filter-item'>
                 {{route.title}}
@@ -14,7 +14,7 @@
       </mat-form-field>
     </div>
     <div>
-      <mat-checkbox [ngModel]='showStops' (change)='onCheckboxChange($event)' color='primary'>Show Stops</mat-checkbox>
+      <mat-checkbox [(ngModel)]='showStops' (change)='onCheckboxChange()' color='primary'>Show Stops</mat-checkbox>
     </div>
   </div>
 </div>

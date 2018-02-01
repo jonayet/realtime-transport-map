@@ -12,7 +12,7 @@ export function transformRoutes(routeList: RouteList): Routes {
         title: route.title,
         color: defaultRouteColor,
         isUpdated: false,
-        show: false
+        show: true
       };
       return routesMap;
     }, {} as Routes);

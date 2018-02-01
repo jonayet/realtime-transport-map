@@ -23,7 +23,7 @@ export class TransportMapComponent implements OnInit, OnDestroy {
 
   private projectionOption = {
     scale: 1000000,
-    centroid: [-122.45, 37.76]
+    centroid: [-122.45, 37.78]
   };
 
   private rootLayerOptions = {
@@ -58,20 +58,20 @@ export class TransportMapComponent implements OnInit, OnDestroy {
     });
 
     this.mapDataService.routes.subscribe((routes) => {
-      if (!routes.length) {
-        return;
-      }
       this.updateRoutesCache(routes);
       if (!this.isInitialized && routes.length) {
         this.routes = routes;
         this.filteredRoutes = [routes[0]];
-        // this.mapDataService.setVisibleRoutes(this.filteredRoutes);
-        this.mapDataService.setVisibleVehicles(this.filteredRoutes);
-        this.mapDataService.setVisibleStops(this.filteredRoutes);
-        this.mapDataService.updateRouteDetailsOnceInBackground(this.filteredRoutes);
-        this.mapDataService.updateVehiclesInBackground(this.filteredRoutes);
+        this.mapDataService.setVisibleRoutes(this.filteredRoutes);
         this.isInitialized = true;
       }
+    });
+
+    this.mapDataService.visibleRoutes.subscribe((routes) => {
+      this.mapDataService.setVisibleVehicles(routes);
+      this.mapDataService.setVisibleStops(this.showStops ? routes : []);
+      this.mapDataService.updateRouteDetailsOnceInBackground(routes);
+      this.mapDataService.updateVehiclesInBackground(routes);
     });
 
     this.mapDataService.vehiclesGeoData.subscribe((vehicleGeoData) => {
@@ -91,18 +91,12 @@ export class TransportMapComponent implements OnInit, OnDestroy {
     this.mapDataService.stopUpdatingVehicles();
   }
 
-  onCheckboxChange({checked}) {
-    this.showStops = checked;
+  onCheckboxChange() {
     this.mapDataService.setVisibleStops(this.showStops ? this.filteredRoutes : []);
   }
 
-  onFilterChange({value}) {
-    this.filteredRoutes = value;
+  onFilterChange() {
     this.mapDataService.setVisibleRoutes(this.filteredRoutes);
-    this.mapDataService.setVisibleVehicles(this.filteredRoutes);
-    this.mapDataService.setVisibleStops(this.showStops ? this.filteredRoutes : []);
-    this.mapDataService.updateVehiclesInBackground(this.filteredRoutes);
-    this.mapDataService.updateRouteDetailsOnceInBackground(this.filteredRoutes);
   }
 
   private updateRoutesCache(routes: Route[]) {

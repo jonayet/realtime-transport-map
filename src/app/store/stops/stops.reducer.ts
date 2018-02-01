@@ -15,7 +15,7 @@ export function stopsReducer(state: Stops = {}, action: Actions): Stops {
       const stops: Stops = {};
 
       convertToArray<Stop>(state, (s) => s).forEach((stop) => {
-        const isVisible = !!routesMap[stop.tag];
+        const isVisible = !!routesMap[stop.routeTag];
         stops[stop.routeTag + stop.tag] = {...stop, show: isVisible};
       });
       return stops;

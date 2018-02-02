@@ -9,8 +9,8 @@
       "urls": [
         "https://jonayet.github.io/realtime-transport-map/favicon.ico",
         "https://jonayet.github.io/realtime-transport-map/index.html",
-        "https://jonayet.github.io/realtime-transport-map/inline.6587a51e519240a30bdc.bundle.js",
-        "https://jonayet.github.io/realtime-transport-map/main.0c13ac5b91265eed2c1d.bundle.js",
+        "https://jonayet.github.io/realtime-transport-map/inline.ae95226f28affead4092.bundle.js",
+        "https://jonayet.github.io/realtime-transport-map/main.a903b06eeba66ef81dfc.bundle.js",
         "https://jonayet.github.io/realtime-transport-map/polyfills.f20484b2fa4642e0dca8.bundle.js",
         "https://jonayet.github.io/realtime-transport-map/styles.dec312438fa7bf5ed3a3.bundle.css"
       ],
@@ -33,35 +33,25 @@
     {
       "name": "long-term-cache",
       "patterns": [
-        "http:\\/\\/webservices\\.nextbus\\.com\\/service\\/publicJSONFeed\\?command=routeList"
+        "http:\\/\\/webservices\\.nextbus\\.com\\/service\\/publicJSONFeed\\?command=routeList",
+        "http:\\/\\/webservices\\.nextbus\\.com\\/service\\/publicJSONFeed\\?command=routeConfig"
       ],
       "strategy": "performance",
       "maxSize": 100,
       "maxAge": 259200000,
       "version": 1
-    },
-    {
-      "name": "short-term-cache",
-      "patterns": [
-        "http:\\/\\/webservices\\.nextbus\\.com\\/service\\/publicJSONFeed\\?command=vehicleLocations"
-      ],
-      "strategy": "freshness",
-      "maxSize": 100,
-      "maxAge": 259200000,
-      "timeoutMs": 10000,
-      "version": 1
     }
   ],
   "hashTable": {
-    "https://jonayet.github.io/realtime-transport-map/inline.6587a51e519240a30bdc.bundle.js": "c0fde70fc39cc7663f44ba4fd64aeb070404c36e",
+    "https://jonayet.github.io/realtime-transport-map/inline.ae95226f28affead4092.bundle.js": "c21e5e152e857997eae2005c649ff1c2482edfb4",
     "https://jonayet.github.io/realtime-transport-map/assets/sfmaps/arteries.json": "b8bd7641b67b685d608d0f3b8bc77df0a215a92a",
-    "https://jonayet.github.io/realtime-transport-map/main.0c13ac5b91265eed2c1d.bundle.js": "cd9ce935977ac33a66f08f63e91757158a5be9f2",
+    "https://jonayet.github.io/realtime-transport-map/main.a903b06eeba66ef81dfc.bundle.js": "52c0ffcf1efc7ac4f9330699e14a36351aba178c",
     "https://jonayet.github.io/realtime-transport-map/assets/sfmaps/freeways.json": "e1c77042aefafc5287d672bf2e3c6a5c139818bb",
     "https://jonayet.github.io/realtime-transport-map/polyfills.f20484b2fa4642e0dca8.bundle.js": "0b0af365e031b7cbba789493d311e94192720c68",
     "https://jonayet.github.io/realtime-transport-map/assets/sfmaps/neighborhoods.json": "bfcfd62fea954edb3313691aa9c051f2b8cccf69",
     "https://jonayet.github.io/realtime-transport-map/styles.dec312438fa7bf5ed3a3.bundle.css": "bccc06e11ff7aab6d873cdd0e858d4a845e8cbd6",
     "https://jonayet.github.io/realtime-transport-map/assets/sfmaps/streets.json": "eced251d046d87ed582f1762f2963d3830eac562",
     "https://jonayet.github.io/realtime-transport-map/favicon.ico": "84161b857f5c547e3699ddfbffc6d8d737542e01",
-    "https://jonayet.github.io/realtime-transport-map/index.html": "eeb90d603f150b4545b7390f01ed68f74da8a14d"
+    "https://jonayet.github.io/realtime-transport-map/index.html": "80d5bc020f323fe701200e16a70c7df421e68d5a"
   }
 }

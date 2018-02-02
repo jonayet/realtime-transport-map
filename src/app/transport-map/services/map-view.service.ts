@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { scaleLinear, select, zoom, event, geoMercator, geoPath, GeoProjection, ScaleLinear } from 'd3';
+import { scaleLinear, select, zoom, event, geoMercator, geoPath, GeoProjection, ScaleLinear, transition, easeLinear } from 'd3';
 
 import { MapLayer, LayerOptions, ProjectionOptions, GeoData, GeoFeature } from '../models';
 
@@ -8,8 +8,13 @@ export class MapViewService {
   private projection: GeoProjection;
   private path: any;
   private vehicleTriangle = '3,0 0,9 6,9';
+  private vehicleTransition: any;
 
-  constructor() { }
+  constructor() {
+    this.vehicleTransition = transition()
+    .duration(750)
+    .ease(easeLinear);
+   }
 
   createMap(hostElement: any, layerOptions: LayerOptions, projectionOptions: ProjectionOptions): MapLayer {
     const host = select(hostElement);
@@ -82,12 +87,15 @@ export class MapViewService {
       return;
     }
 
+    layer.node.selectAll('polygon').interrupt();
+
     const nodes = layer.node.selectAll('polygon')
       .data(geoData.features);
 
     nodes.enter()
       .append('polygon')
       .merge(nodes)
+      .transition(this.vehicleTransition)
       .attr('points', this.vehicleTriangle)
       .attr('transform', (d: any) => {
         const transform = `translate(${this.projection(d.geometry.coordinates)})`;

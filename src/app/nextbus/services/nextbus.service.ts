@@ -3,16 +3,23 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 
+import { environment } from '../../../environments/environment';
 import { Route, Routes, Stop, RouteList, RouteConfig, Vehicles, VehicleLocations } from '../models';
 import { transformRoutes, transformVehicles, transformRouteDetails, transformStops } from '../transformers';
 
 @Injectable()
 export class NextbusService {
   private agency = 'sf-muni';
-  private baseUrl = 'http://webservices.nextbus.com/service/publicJSONFeed';
+  private baseUrl: string;
   private lastRequestTimeMap = {};
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+    if (environment.githubPages) {
+      this.baseUrl = 'https://webservices.nextbus.com/service/publicJSONFeed';
+    } else {
+      this.baseUrl = 'http://webservices.nextbus.com/service/publicJSONFeed';
+    }
+  }
 
   getRoutes(): Observable<Routes> {
     const routesUrl = `${this.baseUrl}?command=routeList&a=${this.agency}`;

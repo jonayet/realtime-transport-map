@@ -1,14 +1,33 @@
 # Real Time Transport Map
+Show real time transport locations on a map.
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.6.6.
+# Map highlights
+ - Zoom (mouse scroll)
+ - Filter Routes
+ - Show/Hide Stops
+ - Vehicles are triangle and Stops are rectangular
+ - Vehicles color, Stops color (inherited from associated Route color)
+ - Vehicles heading (shown by rotating triangle)
+
+# Tools:
+ - Build tool: Angular CLI
+ - SPA Framework: Angular 5
+ - UI Framework: Angular Material
+ - Data Visulization Framework: D3.js
+ - Data Flow: @ngrx/store, @ngrx/effects, RxJs
+
+# Performance consideration:
+ - Progressive Web App philosophy (Service Worker)
+ - Used associative array for faster and partial data update
+ - Requested data in chunks to ensure optimize the http traffic
+
+# Development consideration:
+ - Modular, single source of truth, SRP, LIFT (Locate quickly, Identify at a glance, Flat structure, and Try to be DRY)
+ - Unit Tests (critical cases only)
 
 ## Development server
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
-
-## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Run `ng serve`. Navigate to `http://localhost:4200/`.
 
 ## Build
 
@@ -17,11 +36,3 @@ Run `ng build` to build the project. The build artifacts will be stored in the `
 ## Running unit tests
 
 Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).

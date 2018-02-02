@@ -31,24 +31,13 @@
     {
       "name": "long-term-cache",
       "urls": [
-        "http://webservices.nextbus.com/service/publicJSONFeed?command=routeList"
+        "http://webservices.nextbus.com/service/publicJSONFeed?command=routeList",
+        "http://webservices.nextbus.com/service/publicJSONFeed?command=routeConfig"
       ],
       "cacheConfig": {
         "strategy": "performance",
         "maxSize": 100,
         "maxAge": "3d"
-      }
-    },
-    {
-      "name": "short-term-cache",
-      "urls": [
-        "http://webservices.nextbus.com/service/publicJSONFeed?command=vehicleLocations"
-      ],
-      "cacheConfig": {
-        "strategy": "freshness",
-        "maxSize": 100,
-        "maxAge": "3d",
-        "timeout": "10s"
       }
     }
   ]

@@ -23,6 +23,7 @@ export class MapDataService {
   private routeStreamSubscription: Subscription;
   private vehicleStreamSubscription: Subscription;
   private vehicleStreamTimerSubscription: Subscription;
+  private updateInterval = 15000;
 
   constructor(private store: Store<State>) {
     this.streetsGeoData = store.pipe(select(StreetsStore));
@@ -34,7 +35,7 @@ export class MapDataService {
 
   updateRouteDetailsOnceInBackground(routes: Route[]) {
     this.stopUpdatingRouteDetails();
-    this.routeStreamSubscription = doLazyStream<Route>(routes, 5, 15000).subscribe((route) => {
+    this.routeStreamSubscription = doLazyStream<Route>(routes, 5, this.updateInterval).subscribe((route) => {
       this.store.dispatch(new UpdateRouteDetails(route));
     }, (error) => {
       console.log(error);
@@ -43,12 +44,12 @@ export class MapDataService {
 
   updateVehiclesInBackground(routes: Route[]) {
     this.stopUpdatingVehicles();
-    this.vehicleStreamSubscription = doLazyStream<Route>(routes, 5, 15000).subscribe((route) => {
+    this.vehicleStreamSubscription = doLazyStream<Route>(routes, 5, this.updateInterval).subscribe((route) => {
       this.store.dispatch(new UpdateVehicles(route));
     }, (error) => {
       console.log(error);
     }, () => {
-      this.vehicleStreamTimerSubscription = Observable.timer(15000).subscribe(() => {
+      this.vehicleStreamTimerSubscription = Observable.timer(this.updateInterval).subscribe(() => {
         this.updateVehiclesInBackground(routes);
       });
     });

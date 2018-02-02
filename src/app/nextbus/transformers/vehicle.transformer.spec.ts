@@ -52,6 +52,7 @@ function mockRoute({...props} = {}): Route {
     tag: chooseFromList(['E', 'F', 'G', 'H']),
     title: chooseFromList(['E Bus', 'F Train', 'G Tarm', 'H Metro']),
     color: chooseFromList(['red', 'green', 'blue']),
+    show: true,
     ...props
   };
   return route;

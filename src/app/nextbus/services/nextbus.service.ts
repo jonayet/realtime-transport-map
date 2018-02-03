@@ -10,16 +10,10 @@ import { transformRoutes, transformVehicles, transformRouteDetails, transformSto
 @Injectable()
 export class NextbusService {
   private agency = 'sf-muni';
-  private baseUrl: string;
+  private baseUrl = 'http://webservices.nextbus.com/service/publicJSONFeed';
   private lastRequestTimeMap = {};
 
-  constructor(private http: HttpClient) {
-    if (environment.githubPages) {
-      this.baseUrl = 'https://webservices.nextbus.com/service/publicJSONFeed';
-    } else {
-      this.baseUrl = 'http://webservices.nextbus.com/service/publicJSONFeed';
-    }
-  }
+  constructor(private http: HttpClient) { }
 
   getRoutes(): Observable<Routes> {
     const routesUrl = `${this.baseUrl}?command=routeList&a=${this.agency}`;

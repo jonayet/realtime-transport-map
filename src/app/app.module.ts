@@ -5,6 +5,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
+import { MatButtonModule, MatIconModule } from '@angular/material';
 
 import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
@@ -20,6 +21,8 @@ import { reducers, effects } from './store';
     BrowserModule,
     CommonModule,
     HttpClientModule,
+    MatButtonModule,
+    MatIconModule,
     NextbusModule,
     TransportMapModule,
     StoreModule.forRoot(reducers),

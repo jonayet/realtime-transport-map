@@ -9,6 +9,9 @@ Show real time transport locations on a map.
  - Vehicles color, Stops color (inherited from associated Route color)
  - Vehicles heading (shown by rotating triangle)
 
+ # Demo:
+ http://realtime-transport-map.surge.sh/
+
 # Tools:
  - Build tool: Angular CLI
  - SPA Framework: Angular 5

@@ -1,6 +1,6 @@
 import { AppPage } from './app.po';
 
-describe('sf-muni-transport-map App', () => {
+describe('realtime-transport-map App', () => {
   let page: AppPage;
 
   beforeEach(() => {

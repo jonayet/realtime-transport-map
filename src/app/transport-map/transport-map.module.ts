@@ -14,7 +14,7 @@ import { MapViewService, MapDataService } from './services';
     ReactiveFormsModule,
     BrowserAnimationsModule,
     MatSelectModule,
-    MatCheckboxModule,
+    MatCheckboxModule
   ],
   declarations: [ TransportMapComponent ],
   exports:  [ TransportMapComponent ],

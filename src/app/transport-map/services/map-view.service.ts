@@ -8,11 +8,12 @@ export class MapViewService {
   private projection: GeoProjection;
   private path: any;
   private vehicleTriangle = '3,0 0,9 6,9';
+  private vehicleTransitionDuration = 1000;
   private vehicleTransition: any;
 
   constructor() {
     this.vehicleTransition = transition()
-    .duration(750)
+    .duration(this.vehicleTransitionDuration)
     .ease(easeLinear);
    }
 

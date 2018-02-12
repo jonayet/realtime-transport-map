@@ -11,6 +11,7 @@ export function doLazyStream<T = any>(routes: T[], routesPerBatch = 10, interval
   let streamSubscription: Subscription;
   let observer: Subscriber<T>;
 
+  // TODO: use rxjs Subject
   const observable = new Observable<T>(_observer => {
     observer = _observer;
     return () => {
@@ -20,16 +21,16 @@ export function doLazyStream<T = any>(routes: T[], routesPerBatch = 10, interval
     };
   });
 
-  timerSubscription = Observable.timer(0, interval).subscribe(() => {
-    stream.request(routesPerBatch);
-  });
-
   streamSubscription = stream.source.subscribe((route) => {
     observer.next(route);
   }, (err) => {
     observer.error();
   }, () => {
     observer.complete();
+  });
+
+  timerSubscription = Observable.timer(0, interval).subscribe(() => {
+    stream.request(routesPerBatch);
   });
 
   return observable;

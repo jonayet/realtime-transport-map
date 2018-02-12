@@ -92,6 +92,7 @@ export class TransportMapComponent implements OnInit, OnDestroy {
   }
 
   onCheckboxChange() {
+    // this.stopsLayer.node.style('opacity', this.showStops ? 1 : 0);
     this.mapDataService.setVisibleStops(this.showStops ? this.filteredRoutes : []);
   }
 

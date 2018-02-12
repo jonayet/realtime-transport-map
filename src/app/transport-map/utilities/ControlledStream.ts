@@ -11,6 +11,8 @@ export class ControlledStream<T> {
   constructor(private data: T[]) {
     this.streamData = [].concat(data);
     this.streamIndex = 0;
+
+    // TODO: use rxjs Subject
     this.source = new Observable<T>(observer => {
       this.observer = observer;
       return () => {
@@ -26,12 +28,13 @@ export class ControlledStream<T> {
     }
     for (let i = 0; i < count; i++) {
       if (this.observer.closed) {
-        return;
+        break;
       }
       this.observer.next(this.streamData[this.streamIndex]);
       this.streamIndex++;
       if (this.streamIndex === this.streamData.length) {
         this.observer.complete();
+        break;
       }
     }
   }

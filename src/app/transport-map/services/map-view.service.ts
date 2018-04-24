@@ -83,6 +83,20 @@ export class MapViewService {
       .remove();
   }
 
+  drawArteriesLayer(layer: MapLayer, geoData: any) {
+    const nodes = layer.node.selectAll('path')
+      .data(geoData.features);
+
+    nodes.enter()
+      .append('path')
+      .merge(nodes)
+      .attr('d', this.path)
+      .attr('vector-effect', 'non-scaling-stroke');
+
+    nodes.exit()
+      .remove();
+  }
+
   drawVehiclesLayer(layer: MapLayer, geoData: any) {
     if (!geoData || !geoData.features) {
       return;

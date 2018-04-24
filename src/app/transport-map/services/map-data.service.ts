@@ -6,16 +6,18 @@ import 'rxjs/add/observable/timer';
 
 import { GeoData, GeoFeature } from '../models';
 import { Route, Routes, Vehicles } from '../../nextbus/models';
-import { State, StreetsStore, RoutesStore, VisibleRoutesStore, VehiclesStore, StopsStore } from '../../store';
+import { State, StreetsStore, RoutesStore, VisibleRoutesStore, VehiclesStore, StopsStore, ArteriesStore } from '../../store';
 import { UpdateStreets } from '../../store/streets';
 import { UpdateRoutes, UpdateRouteDetails, SetVisibleRoutes } from '../../store/routes';
 import { UpdateVehicles, SetVisibleVehicles } from '../../store/vehicles';
 import { SetVisibleStops } from '../../store/stops';
 import { convertToArray, convertToGeoData, doLazyStream } from '../utilities';
+import { UpdateArteries } from '../../store/arteries';
 
 @Injectable()
 export class MapDataService {
   streetsGeoData: Observable<GeoData>;
+  arteriesGeoData: Observable<GeoData>;
   routes: Observable<Route[]>;
   visibleRoutes: Observable<Route[]>;
   vehiclesGeoData: Observable<GeoData>;
@@ -27,6 +29,7 @@ export class MapDataService {
 
   constructor(private store: Store<State>) {
     this.streetsGeoData = store.pipe(select(StreetsStore));
+    this.arteriesGeoData = store.pipe(select(ArteriesStore));
     this.routes = store.pipe(select(RoutesStore)).map((routes) => convertToArray(routes, (r) => r));
     this.visibleRoutes = store.pipe(select(VisibleRoutesStore));
     this.vehiclesGeoData = store.pipe(select(VehiclesStore)).map((vehicles) => convertToGeoData(vehicles));
@@ -92,5 +95,9 @@ export class MapDataService {
 
   updateRoutes() {
     this.store.dispatch(new UpdateRoutes());
+  }
+
+  updateArteries() {
+    this.store.dispatch(new UpdateArteries());
   }
 }

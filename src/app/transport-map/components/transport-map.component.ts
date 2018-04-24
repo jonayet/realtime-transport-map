@@ -39,6 +39,7 @@ export class TransportMapComponent implements OnInit, OnDestroy {
   };
 
   private streetsLayer: MapLayer;
+  private arteriesLayer: MapLayer;
   private vehiclesLayer: MapLayer;
   private stopsLayer: MapLayer;
 
@@ -50,11 +51,17 @@ export class TransportMapComponent implements OnInit, OnDestroy {
   ngOnInit() {
     const mapRootLayer = this.mapViewService.createMap(this.hostElement.nativeElement, this.rootLayerOptions, this.projectionOption);
     this.streetsLayer = this.mapViewService.createLayer(mapRootLayer, this.routeLayerOptions);
+    this.arteriesLayer = this.mapViewService.createLayer(mapRootLayer, this.routeLayerOptions);
     this.vehiclesLayer = this.mapViewService.createLayer(mapRootLayer, this.transportLayerOptions);
     this.stopsLayer = this.mapViewService.createLayer(mapRootLayer, this.transportLayerOptions);
 
     this.mapDataService.streetsGeoData.subscribe((streetsGeoData) => {
-      this.mapViewService.drawStreetsLayer(this.streetsLayer, streetsGeoData);
+      // this.mapViewService.drawStreetsLayer(this.streetsLayer, streetsGeoData);
+    });
+
+    this.mapDataService.arteriesGeoData.subscribe((arteriesGeoData) => {
+      console.log(arteriesGeoData);
+      this.mapViewService.drawArteriesLayer(this.streetsLayer, arteriesGeoData);
     });
 
     this.mapDataService.routes.subscribe((routes) => {
@@ -83,6 +90,7 @@ export class TransportMapComponent implements OnInit, OnDestroy {
     });
 
     this.mapDataService.updateStreets();
+    this.mapDataService.updateArteries();
     this.mapDataService.updateRoutes();
   }
 
